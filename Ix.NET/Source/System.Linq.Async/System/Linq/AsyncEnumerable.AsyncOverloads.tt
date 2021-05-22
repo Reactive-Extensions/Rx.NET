@@ -77,6 +77,7 @@ Func<ParameterInfo, string> getOptionalSuffix = p =>
 };
 #>
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -109,7 +110,7 @@ foreach (var g in asyncMethods.GroupBy(m => m.Name.Contains("WithCancellation"))
         var isExtension = m.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), true);
         var pars = (isExtension ? "this " : "") + string.Join(", ", m.GetParameters().Select(p => toCSharp(p.ParameterType) + " " + p.Name + getOptionalSuffix(p)));
         var args = string.Join(", ", m.GetParameters().Select(p => p.Name));
-        var cons = m.Name.StartsWith("ToDictionary") ? " where TKey : notnull" : "";
+        var cons = m.Name.StartsWith("ToDictionary") || m.Name.StartsWith("ToImmutableDictionary") ? " where TKey : notnull" : "";
 #>
         public static <#=returnType#> <#=shortName#><#=genArgs#>(<#=pars#>)<#=cons#> => <#=longName#><#=genArgs#>(<#=args#>);
 <#
@@ -144,7 +145,7 @@ foreach (var g in asyncMethods.GroupBy(m => m.Name.Contains("WithCancellation"))
         var isExtension = m.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), true);
         var pars = (isExtension ? "this " : "") + string.Join(", ", m.GetParameters().Select(p => toCSharp(p.ParameterType) + " " + p.Name + getOptionalSuffix(p)));
         var args = string.Join(", ", m.GetParameters().Select(p => p.Name));
-        var cons = m.Name.StartsWith("ToDictionary") ? " where TKey : notnull" : "";
+        var cons = m.Name.StartsWith("ToDictionary") || m.Name.StartsWith("ToImmutableDictionary") ? " where TKey : notnull" : "";
 #>
         public static <#=returnType#> <#=shortName#><#=genArgs#>(<#=pars#>)<#=cons#> => <#=longName#><#=genArgs#>(<#=args#>);
 <#
