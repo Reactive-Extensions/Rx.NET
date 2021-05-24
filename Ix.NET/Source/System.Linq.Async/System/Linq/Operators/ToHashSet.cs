@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Linq.Async.System.Linq.FunctionalHelpers;
 
 namespace System.Linq
 {
@@ -37,19 +38,10 @@ namespace System.Linq
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
 
-            return Core(source, comparer, cancellationToken);
-
-            static async ValueTask<HashSet<TSource>> Core(IAsyncEnumerable<TSource> source, IEqualityComparer<TSource>? comparer, CancellationToken cancellationToken)
-            {
-                var set = new HashSet<TSource>(comparer);
-
-                await foreach (var item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
-                {
-                    set.Add(item);
-                }
-
-                return set;
-            }
+            return source.ToCollection(
+                new HashSet<TSource>(comparer),
+                Identity,
+                cancellationToken);
         }
     }
 }

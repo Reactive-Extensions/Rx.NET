@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Linq.Async.System.Linq.FunctionalHelpers;
 
 namespace System.Linq
 {
@@ -27,19 +28,7 @@ namespace System.Linq
             if (source is IAsyncIListProvider<TSource> listProvider)
                 return listProvider.ToListAsync(cancellationToken);
 
-            return Core(source, cancellationToken);
-
-            static async ValueTask<List<TSource>> Core(IAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
-            {
-                var list = new List<TSource>();
-
-                await foreach (var item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
-                {
-                    list.Add(item);
-                }
-
-                return list;
-            }
+            return source.ToCollection(new List<TSource>(), Identity, cancellationToken);
         }
     }
 }

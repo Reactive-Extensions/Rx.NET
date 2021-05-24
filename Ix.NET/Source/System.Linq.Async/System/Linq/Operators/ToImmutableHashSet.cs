@@ -38,19 +38,10 @@ namespace System.Linq
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
 
-            return Core(source, equalityComparer, cancellationToken);
-
-            static async ValueTask<ImmutableHashSet<TSource>> Core(IAsyncEnumerable<TSource> source, IEqualityComparer<TSource>? equalityComparer, CancellationToken cancellationToken)
-            {
-                var builder = ImmutableHashSet.CreateBuilder(equalityComparer);
-
-                await foreach (var item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
-                {
-                    builder.Add(item);
-                }
-
-                return builder.ToImmutable();
-            }
+            return source.ToCollection(
+                ImmutableHashSet.CreateBuilder(equalityComparer),
+                static builder => builder.ToImmutable(),
+                cancellationToken);
         }
     }
 }

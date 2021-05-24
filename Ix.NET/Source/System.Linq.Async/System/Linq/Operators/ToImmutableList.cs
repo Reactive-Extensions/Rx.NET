@@ -25,19 +25,10 @@ namespace System.Linq
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
 
-            return Core(source, cancellationToken);
-
-            static async ValueTask<ImmutableList<TSource>> Core(IAsyncEnumerable<TSource> source, CancellationToken cancellationToken = default)
-            {
-                var builder = ImmutableList.CreateBuilder<TSource>();
-
-                await foreach (var item in source.WithCancellation(cancellationToken))
-                {
-                    builder.Add(item);
-                }
-
-                return builder.ToImmutable();
-            }
+            return source.ToCollection(
+                ImmutableList.CreateBuilder<TSource>(),
+                static builder => builder.ToImmutable(),
+                cancellationToken);
         }
     }
 }
