@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Linq.Async.System.Linq.FunctionalHelpers;
+using static System.Linq.FunctionalHelpers;
 
 namespace System.Linq
 {
