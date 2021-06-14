@@ -1,0 +1,14 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the Apache 2.0 License.
+// See the LICENSE file in the project root for more information. 
+
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="$(ProjectDir)\..\System.Interactive\bin\$(Configuration)\net45\System.Interactive.dll" #>
+<#@ output extension=".cs" #>
+<#
+var enumerableType = typeof(EnumerableEx);
+var className = "QueryableEx";
+var nullableParameterNames = new string[0] { }; // TODO: Add comparer
+var exclude = new[] { "ForEach" };
+#>
+<#@ include file="$(SolutionDir)\QueryableGenerator.t4" #>

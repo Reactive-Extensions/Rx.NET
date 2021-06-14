@@ -187,5 +187,12 @@ namespace System.Linq
         {
             return ((MethodCallExpression)f.Body).Method;
         }
+
+        private sealed class TSource { }
+        private sealed class TResult { }
+        private sealed class TAccumulate { }
+        private sealed class TOther { }
+        private sealed class TKey { }
+        private sealed class TException : Exception { }
     }
 }

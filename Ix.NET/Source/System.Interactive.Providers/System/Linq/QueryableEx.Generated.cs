@@ -11,794 +11,90 @@ namespace System.Linq
 {
     public static partial class QueryableEx
     {
-        /// <summary>
-        /// Determines whether an enumerable sequence is empty.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <returns>true if the sequence is empty; false otherwise.</returns>
-        public static bool IsEmpty<TSource>(this IQueryable<TSource> source)
+        private static MethodInfo s_Buffer__TSource__2__0;
+        
+        private static MethodInfo Buffer__TSource__2__0(Type TSource) =>
+            (s_Buffer__TSource__2__0 ??
+            (s_Buffer__TSource__2__0 = new Func<IQueryable<TSource>, int, IQueryable<IList<TSource>>>(Buffer<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<IList<TSource>> Buffer<TSource>(this IQueryable<TSource> source, int count)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source.Provider.Execute<bool>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.IsEmpty<TSource>(default(IQueryable<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression
-                )
-            );
+            return source.Provider.CreateQuery<IList<TSource>>(Expression.Call(Buffer__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(count, typeof(int))));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static bool IsEmpty<TSource>(IEnumerable<TSource> source)
+        public static IEnumerable<IList<TSource>> Buffer<TSource>(IEnumerable<TSource> source, int count)
         {
-            return EnumerableEx.IsEmpty(source);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Buffer<TSource>(source, count);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns the minimum value in the enumerable sequence by using the specified comparer to compare values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="comparer">Comparer used to determine the minimum value.</param>
-        /// <returns>Minimum value in the sequence.</returns>
-        public static TSource Min<TSource>(this IQueryable<TSource> source, IComparer<TSource> comparer)
+        private static MethodInfo s_Buffer__TSource__3__0;
+        
+        private static MethodInfo Buffer__TSource__3__0(Type TSource) =>
+            (s_Buffer__TSource__3__0 ??
+            (s_Buffer__TSource__3__0 = new Func<IQueryable<TSource>, int, int, IQueryable<IList<TSource>>>(Buffer<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<IList<TSource>> Buffer<TSource>(this IQueryable<TSource> source, int count, int skip)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
 
-            return source.Provider.Execute<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Min<TSource>(default(IQueryable<TSource>), default(IComparer<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(comparer, typeof(IComparer<TSource>))
-                )
-            );
+            return source.Provider.CreateQuery<IList<TSource>>(Expression.Call(Buffer__TSource__3__0(typeof(TSource)), source.Expression, Expression.Constant(count, typeof(int)), Expression.Constant(skip, typeof(int))));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static TSource Min<TSource>(IEnumerable<TSource> source, IComparer<TSource> comparer)
+        public static IEnumerable<IList<TSource>> Buffer<TSource>(IEnumerable<TSource> source, int count, int skip)
         {
-            return EnumerableEx.Min(source, comparer);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns the elements with the minimum key value by using the default comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector used to extract the key for each element in the sequence.</param>
-        /// <returns>List with the elements that share the same minimum key value.</returns>
-        public static IList<TSource> MinBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-
-            return source.Provider.Execute<IList<TSource>>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.MinBy<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>))),
+#if REFERENCE_ASSEMBLY
+            return default;
 #else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
+            return EnumerableEx.Buffer<TSource>(source, count, skip);
 #endif
-                    source.Expression,
-                    keySelector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IList<TSource> MinBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            return EnumerableEx.MinBy(source, keySelector);
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns the elements with the minimum key value by using the specified comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector used to extract the key for each element in the sequence.</param>
-        /// <param name="comparer">Comparer used to determine the minimum key value.</param>
-        /// <returns>List with the elements that share the same minimum key value.</returns>
-        public static IList<TSource> MinBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
+        private static MethodInfo s_Catch__TSource__1__0;
+        
+        private static MethodInfo Catch__TSource__1__0(Type TSource) =>
+            (s_Catch__TSource__1__0 ??
+            (s_Catch__TSource__1__0 = new Func<IQueryable<IEnumerable<TSource>>, IQueryable<TSource>>(Catch<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
 
-            return source.Provider.Execute<IList<TSource>>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.MinBy<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>), default(IComparer<TKey>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
-#endif
-                    source.Expression,
-                    keySelector,
-                    Expression.Constant(comparer, typeof(IComparer<TKey>))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IList<TSource> MinBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
-        {
-            return EnumerableEx.MinBy(source, keySelector, comparer);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns the maximum value in the enumerable sequence by using the specified comparer to compare values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="comparer">Comparer used to determine the maximum value.</param>
-        /// <returns>Maximum value in the sequence.</returns>
-        public static TSource Max<TSource>(this IQueryable<TSource> source, IComparer<TSource> comparer)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
-
-            return source.Provider.Execute<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Max<TSource>(default(IQueryable<TSource>), default(IComparer<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(comparer, typeof(IComparer<TSource>))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static TSource Max<TSource>(IEnumerable<TSource> source, IComparer<TSource> comparer)
-        {
-            return EnumerableEx.Max(source, comparer);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns the elements with the maximum key value by using the default comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector used to extract the key for each element in the sequence.</param>
-        /// <returns>List with the elements that share the same maximum key value.</returns>
-        public static IList<TSource> MaxBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-
-            return source.Provider.Execute<IList<TSource>>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.MaxBy<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
-#endif
-                    source.Expression,
-                    keySelector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IList<TSource> MaxBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            return EnumerableEx.MaxBy(source, keySelector);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns the elements with the minimum key value by using the specified comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector used to extract the key for each element in the sequence.</param>
-        /// <param name="comparer">Comparer used to determine the maximum key value.</param>
-        /// <returns>List with the elements that share the same maximum key value.</returns>
-        public static IList<TSource> MaxBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
-
-            return source.Provider.Execute<IList<TSource>>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.MaxBy<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>), default(IComparer<TKey>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
-#endif
-                    source.Expression,
-                    keySelector,
-                    Expression.Constant(comparer, typeof(IComparer<TKey>))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IList<TSource> MaxBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
-        {
-            return EnumerableEx.MaxBy(source, keySelector, comparer);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Shares the source sequence within a selector function where each enumerator can fetch the next element from the source sequence.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="selector">Selector function with shared access to the source sequence for each enumerator.</param>
-        /// <returns>Sequence resulting from applying the selector function to the shared view over the source sequence.</returns>
-        public static IQueryable<TResult> Share<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-
-            return source.Provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Share<TSource, TResult>(default(IQueryable<TSource>), default(Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)),
-#endif
-                    source.Expression,
-                    selector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TResult> Share<TSource, TResult>(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
-        {
-            return EnumerableEx.Share(source, selector);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Publishes the source sequence within a selector function where each enumerator can obtain a view over a tail of the source sequence.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="selector">Selector function with published access to the source sequence for each enumerator.</param>
-        /// <returns>Sequence resulting from applying the selector function to the published view over the source sequence.</returns>
-        public static IQueryable<TResult> Publish<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-
-            return source.Provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Publish<TSource, TResult>(default(IQueryable<TSource>), default(Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)),
-#endif
-                    source.Expression,
-                    selector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TResult> Publish<TSource, TResult>(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
-        {
-            return EnumerableEx.Publish(source, selector);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Memoizes the source sequence within a selector function where each enumerator can get access to all of the sequence's elements without causing multiple enumerations over the source.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="selector">Selector function with memoized access to the source sequence for each enumerator.</param>
-        /// <returns>Sequence resulting from applying the selector function to the memoized view over the source sequence.</returns>
-        public static IQueryable<TResult> Memoize<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-
-            return source.Provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Memoize<TSource, TResult>(default(IQueryable<TSource>), default(Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)),
-#endif
-                    source.Expression,
-                    selector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TResult> Memoize<TSource, TResult>(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
-        {
-            return EnumerableEx.Memoize(source, selector);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Memoizes the source sequence within a selector function where a specified number of enumerators can get access to all of the sequence's elements without causing multiple enumerations over the source.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="readerCount">Number of enumerators that can access the underlying buffer. Once every enumerator has obtained an element from the buffer, the element is removed from the buffer.</param>
-        /// <param name="selector">Selector function with memoized access to the source sequence for a specified number of enumerators.</param>
-        /// <returns>Sequence resulting from applying the selector function to the memoized view over the source sequence.</returns>
-        public static IQueryable<TResult> Memoize<TSource, TResult>(this IQueryable<TSource> source, int readerCount, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-
-            return source.Provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Memoize<TSource, TResult>(default(IQueryable<TSource>), default(int), default(Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)),
-#endif
-                    source.Expression,
-                    Expression.Constant(readerCount, typeof(int)),
-                    selector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TResult> Memoize<TSource, TResult>(IEnumerable<TSource> source, int readerCount, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
-        {
-            return EnumerableEx.Memoize(source, readerCount, selector);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates an enumerable sequence based on an enumerator factory function.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="getEnumerator">Enumerator factory function.</param>
-        /// <returns>Sequence that will invoke the enumerator factory upon a call to GetEnumerator.</returns>
-        public static IQueryable<TResult> Create<TResult>(this IQueryProvider provider, Expression<Func<IEnumerator<TResult>>> getEnumerator)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (getEnumerator == null)
-                throw new ArgumentNullException(nameof(getEnumerator));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Create<TResult>(default(IQueryProvider), default(Expression<Func<IEnumerator<TResult>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    getEnumerator
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TResult> Create<TResult>(Func<IEnumerator<TResult>> getEnumerator)
-        {
-            return EnumerableEx.Create(getEnumerator);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns a sequence with a single element.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="value">Single element of the resulting sequence.</param>
-        /// <returns>Sequence with a single element.</returns>
-        public static IQueryable<TResult> Return<TResult>(this IQueryProvider provider, TResult value)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Return<TResult>(default(IQueryProvider), default(TResult))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    Expression.Constant(value, typeof(TResult))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Return<TResult>(TResult value)
-        {
-            return EnumerableEx.Return(value).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns a sequence that throws an exception upon enumeration.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="exception">Exception to throw upon enumerating the resulting sequence.</param>
-        /// <returns>Sequence that throws the specified exception upon enumeration.</returns>
-        public static IQueryable<TResult> Throw<TResult>(this IQueryProvider provider, Exception exception)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (exception == null)
-                throw new ArgumentNullException(nameof(exception));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Throw<TResult>(default(IQueryProvider), default(Exception))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    Expression.Constant(exception, typeof(Exception))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Throw<TResult>(Exception exception)
-        {
-            return EnumerableEx.Throw<TResult>(exception).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates an enumerable sequence based on an enumerable factory function.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="enumerableFactory">Enumerable factory function.</param>
-        /// <returns>Sequence that will invoke the enumerable factory upon a call to GetEnumerator.</returns>
-        public static IQueryable<TResult> Defer<TResult>(this IQueryProvider provider, Expression<Func<IEnumerable<TResult>>> enumerableFactory)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (enumerableFactory == null)
-                throw new ArgumentNullException(nameof(enumerableFactory));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Defer<TResult>(default(IQueryProvider), default(Expression<Func<IEnumerable<TResult>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    enumerableFactory
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Defer<TResult>(Func<IEnumerable<TResult>> enumerableFactory)
-        {
-            return EnumerableEx.Defer(enumerableFactory).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence by mimicking a for loop.
-        /// </summary>
-        /// <typeparam name="TState">State type.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="initialState">Initial state of the generator loop.</param>
-        /// <param name="condition">Loop condition.</param>
-        /// <param name="iterate">State update function to run after every iteration of the generator loop.</param>
-        /// <param name="resultSelector">Result selector to compute resulting sequence elements.</param>
-        /// <returns>Sequence obtained by running the generator loop, yielding computed elements.</returns>
-        public static IQueryable<TResult> Generate<TState, TResult>(this IQueryProvider provider, TState initialState, Expression<Func<TState, bool>> condition, Expression<Func<TState, TState>> iterate, Expression<Func<TState, TResult>> resultSelector)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (condition == null)
-                throw new ArgumentNullException(nameof(condition));
-            if (iterate == null)
-                throw new ArgumentNullException(nameof(iterate));
-            if (resultSelector == null)
-                throw new ArgumentNullException(nameof(resultSelector));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Generate<TState, TResult>(default(IQueryProvider), default(TState), default(Expression<Func<TState, bool>>), default(Expression<Func<TState, TState>>), default(Expression<Func<TState, TResult>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TState), typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    Expression.Constant(initialState),
-                    condition,
-                    iterate,
-                    resultSelector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Generate<TState, TResult>(TState initialState, Func<TState, bool> condition, Func<TState, TState> iterate, Func<TState, TResult> resultSelector)
-        {
-            return EnumerableEx.Generate(initialState, condition, iterate, resultSelector).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence that's dependent on a resource object whose lifetime is determined by the sequence usage duration.
-        /// </summary>
-        /// <typeparam name="TSource">Source element type.</typeparam>
-        /// <typeparam name="TResource">Resource type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="resourceFactory">Resource factory function.</param>
-        /// <param name="enumerableFactory">Enumerable factory function, having access to the obtained resource.</param>
-        /// <returns>Sequence whose use controls the lifetime of the associated obtained resource.</returns>
-        public static IQueryable<TSource> Using<TSource, TResource>(this IQueryProvider provider, Expression<Func<TResource>> resourceFactory, Expression<Func<TResource, IEnumerable<TSource>>> enumerableFactory) where TResource : IDisposable
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (resourceFactory == null)
-                throw new ArgumentNullException(nameof(resourceFactory));
-            if (enumerableFactory == null)
-                throw new ArgumentNullException(nameof(enumerableFactory));
-
-            return provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Using<TSource, TResource>(default(IQueryProvider), default(Expression<Func<TResource>>), default(Expression<Func<TResource, IEnumerable<TSource>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResource)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    resourceFactory,
-                    enumerableFactory
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TSource> Using<TSource, TResource>(Func<TResource> resourceFactory, Func<TResource, IEnumerable<TSource>> enumerableFactory) where TResource : IDisposable
-        {
-            return EnumerableEx.Using(resourceFactory, enumerableFactory).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence by repeating the given value infinitely.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="value">Value to repreat in the resulting sequence.</param>
-        /// <returns>Sequence repeating the given value infinitely.</returns>
-        public static IEnumerable<TResult> Repeat<TResult>(this IQueryProvider provider, TResult value)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Repeat<TResult>(default(IQueryProvider), default(TResult))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    Expression.Constant(value, typeof(TResult))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Repeat<TResult>(TResult value)
-        {
-            return EnumerableEx.Repeat(value).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates a sequence that corresponds to the source sequence, concatenating it with the sequence resulting from calling an exception handler function in case of an error.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TException">Exception type to catch.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="handler">Handler to invoke when an exception of the specified type occurs.</param>
-        /// <returns>Source sequence, concatenated with an exception handler result sequence in case of an error.</returns>
-        public static IQueryable<TSource> Catch<TSource, TException>(this IQueryable<TSource> source, Expression<Func<TException, IEnumerable<TSource>>> handler)
-            where TException : Exception
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Catch<TSource, TException>(default(IQueryable<TSource>), default(Expression<Func<TException, IEnumerable<TSource>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TException)),
-#endif
-                    source.Expression,
-                    handler
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Catch<TSource, TException>(IEnumerable<TSource> source, Func<TException, IEnumerable<TSource>> handler)
-            where TException : Exception
-        {
-            return EnumerableEx.Catch(source, handler);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates a sequence by concatenating source sequences until a source sequence completes successfully.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="sources">Source sequences.</param>
-        /// <returns>Sequence that continues to concatenate source sequences while errors occur.</returns>
         public static IQueryable<TSource> Catch<TSource>(this IQueryable<IEnumerable<TSource>> sources)
         {
             if (sources == null)
                 throw new ArgumentNullException(nameof(sources));
 
-            return sources.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Catch<TSource>(default(IQueryable<IEnumerable<TSource>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    sources.Expression
-                )
-            );
+            return sources.Provider.CreateQuery<TSource>(Expression.Call(Catch__TSource__1__0(typeof(TSource)), sources.Expression));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> Catch<TSource>(IEnumerable<IEnumerable<TSource>> sources)
         {
-            return EnumerableEx.Catch(sources);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates a sequence by concatenating source sequences until a source sequence completes successfully.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="sources">Source sequences.</param>
-        /// <returns>Sequence that continues to concatenate source sequences while errors occur.</returns>
-        public static IQueryable<TSource> Catch<TSource>(this IQueryProvider provider, params IEnumerable<TSource>[] sources)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (sources == null)
-                throw new ArgumentNullException(nameof(sources));
-
-            return provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Catch<TSource>(default(IQueryProvider), default(IEnumerable<TSource>[]))),
+#if REFERENCE_ASSEMBLY
+            return default;
 #else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+            return EnumerableEx.Catch<TSource>(sources);
 #endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    GetSourceExpression(sources)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TSource> Catch<TSource>(params IEnumerable<TSource>[] sources)
-        {
-            return EnumerableEx.Catch(sources).AsQueryable();
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Creates a sequence that returns the elements of the first sequence, switching to the second in case of an error.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="first">First sequence.</param>
-        /// <param name="second">Second sequence, concatenated to the result in case the first sequence completes exceptionally.</param>
-        /// <returns>The first sequence, followed by the second sequence in case an error is produced.</returns>
+        private static MethodInfo s_Catch__TSource__2__0;
+        
+        private static MethodInfo Catch__TSource__2__0(Type TSource) =>
+            (s_Catch__TSource__2__0 ??
+            (s_Catch__TSource__2__0 = new Func<IQueryable<TSource>, IEnumerable<TSource>, IQueryable<TSource>>(Catch<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
         public static IQueryable<TSource> Catch<TSource>(this IQueryable<TSource> first, IEnumerable<TSource> second)
         {
             if (first == null)
@@ -806,961 +102,81 @@ namespace System.Linq
             if (second == null)
                 throw new ArgumentNullException(nameof(second));
 
-            return first.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Catch<TSource>(default(IQueryable<TSource>), default(IEnumerable<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    first.Expression,
-                    GetSourceExpression(second)
-                )
-            );
+            return first.Provider.CreateQuery<TSource>(Expression.Call(Catch__TSource__2__0(typeof(TSource)), first.Expression, GetSourceExpression(second)));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> Catch<TSource>(IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
-            return EnumerableEx.Catch(first, second);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Catch<TSource>(first, second);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Creates a sequence whose termination or disposal of an enumerator causes a finally action to be executed.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="finallyAction">Action to run upon termination of the sequence, or when an enumerator is disposed.</param>
-        /// <returns>Source sequence with guarantees on the invocation of the finally action.</returns>
-        public static IQueryable<TSource> Finally<TSource>(this IQueryable<TSource> source, Expression<Action> finallyAction)
+        private static MethodInfo s_Catch__TSource_TException__2__0;
+        
+        private static MethodInfo Catch__TSource_TException__2__0(Type TSource, Type TException) =>
+            (s_Catch__TSource_TException__2__0 ??
+            (s_Catch__TSource_TException__2__0 = new Func<IQueryable<TSource>, Expression<Func<TException, IEnumerable<TSource>>>, IQueryable<TSource>>(Catch<TSource, TException>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TException);
+
+        public static IQueryable<TSource> Catch<TSource, TException>(this IQueryable<TSource> source, Expression<Func<TException, IEnumerable<TSource>>> handler) where TException : Exception
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
-            if (finallyAction == null)
-                throw new ArgumentNullException(nameof(finallyAction));
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Finally<TSource>(default(IQueryable<TSource>), default(Expression<Action>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    finallyAction
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Catch__TSource_TException__2__0(typeof(TSource), typeof(TException)), source.Expression, handler));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Finally<TSource>(IEnumerable<TSource> source, Action finallyAction)
+        public static IEnumerable<TSource> Catch<TSource, TException>(IEnumerable<TSource> source, Func<TException, IEnumerable<TSource>> handler) where TException : Exception
         {
-            return EnumerableEx.Finally(source, finallyAction);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates a sequence that concatenates both given sequences, regardless of whether an error occurs.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="first">First sequence.</param>
-        /// <param name="second">Second sequence.</param>
-        /// <returns>Sequence concatenating the elements of both sequences, ignoring errors.</returns>
-        public static IQueryable<TSource> OnErrorResumeNext<TSource>(this IQueryable<TSource> first, IEnumerable<TSource> second)
-        {
-            if (first == null)
-                throw new ArgumentNullException(nameof(first));
-            if (second == null)
-                throw new ArgumentNullException(nameof(second));
-
-            return first.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.OnErrorResumeNext<TSource>(default(IQueryable<TSource>), default(IEnumerable<TSource>))),
+#if REFERENCE_ASSEMBLY
+            return default;
 #else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+            return EnumerableEx.Catch<TSource, TException>(source, handler);
 #endif
-                    first.Expression,
-                    GetSourceExpression(second)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> OnErrorResumeNext<TSource>(IEnumerable<TSource> first, IEnumerable<TSource> second)
-        {
-            return EnumerableEx.OnErrorResumeNext(first, second);
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Creates a sequence that concatenates the given sequences, regardless of whether an error occurs in any of the sequences.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="sources">Source sequences.</param>
-        /// <returns>Sequence concatenating the elements of the given sequences, ignoring errors.</returns>
-        public static IEnumerable<TSource> OnErrorResumeNext<TSource>(this IQueryProvider provider, params IEnumerable<TSource>[] sources)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (sources == null)
-                throw new ArgumentNullException(nameof(sources));
+        private static MethodInfo s_Concat__TSource__1__0;
+        
+        private static MethodInfo Concat__TSource__1__0(Type TSource) =>
+            (s_Concat__TSource__1__0 ??
+            (s_Concat__TSource__1__0 = new Func<IQueryable<IEnumerable<TSource>>, IQueryable<TSource>>(Concat<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
 
-            return provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.OnErrorResumeNext<TSource>(default(IQueryProvider), default(IEnumerable<TSource>[]))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    GetSourceExpression(sources)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TSource> OnErrorResumeNext<TSource>(params IEnumerable<TSource>[] sources)
-        {
-            return EnumerableEx.OnErrorResumeNext(sources).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates a sequence that concatenates the given sequences, regardless of whether an error occurs in any of the sequences.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="sources">Source sequences.</param>
-        /// <returns>Sequence concatenating the elements of the given sequences, ignoring errors.</returns>
-        public static IQueryable<TSource> OnErrorResumeNext<TSource>(this IQueryable<IEnumerable<TSource>> sources)
-        {
-            if (sources == null)
-                throw new ArgumentNullException(nameof(sources));
-
-            return sources.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.OnErrorResumeNext<TSource>(default(IQueryable<IEnumerable<TSource>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    sources.Expression
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> OnErrorResumeNext<TSource>(IEnumerable<IEnumerable<TSource>> sources)
-        {
-            return EnumerableEx.OnErrorResumeNext(sources);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates a sequence that retries enumerating the source sequence as long as an error occurs.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <returns>Sequence concatenating the results of the source sequence as long as an error occurs.</returns>
-        public static IQueryable<TSource> Retry<TSource>(this IQueryable<TSource> source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Retry<TSource>(default(IQueryable<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Retry<TSource>(IEnumerable<TSource> source)
-        {
-            return EnumerableEx.Retry(source);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Creates a sequence that retries enumerating the source sequence as long as an error occurs, with the specified maximum number of retries.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="retryCount">Maximum number of retries.</param>
-        /// <returns>Sequence concatenating the results of the source sequence as long as an error occurs.</returns>
-        public static IQueryable<TSource> Retry<TSource>(this IQueryable<TSource> source, int retryCount)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Retry<TSource>(default(IQueryable<TSource>), default(int))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(retryCount, typeof(int))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Retry<TSource>(IEnumerable<TSource> source, int retryCount)
-        {
-            return EnumerableEx.Retry(source, retryCount);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates an enumerable sequence by repeating a source sequence as long as the given loop condition holds.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="condition">Loop condition.</param>
-        /// <param name="source">Sequence to repeat while the condition evaluates true.</param>
-        /// <returns>Sequence generated by repeating the given sequence while the condition evaluates to true.</returns>
-        public static IQueryable<TResult> While<TResult>(this IQueryProvider provider, Expression<Func<bool>> condition, IEnumerable<TResult> source)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (condition == null)
-                throw new ArgumentNullException(nameof(condition));
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.While<TResult>(default(IQueryProvider), default(Expression<Func<bool>>), default(IEnumerable<TResult>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    condition,
-                    GetSourceExpression(source)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> While<TResult>(Func<bool> condition, IEnumerable<TResult> source)
-        {
-            return EnumerableEx.While(condition, source).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns an enumerable sequence based on the evaluation result of the given condition.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="condition">Condition to evaluate.</param>
-        /// <param name="thenSource">Sequence to return in case the condition evaluates true.</param>
-        /// <param name="elseSource">Sequence to return in case the condition evaluates false.</param>
-        /// <returns>Either of the two input sequences based on the result of evaluating the condition.</returns>
-        public static IQueryable<TResult> If<TResult>(this IQueryProvider provider, Expression<Func<bool>> condition, IEnumerable<TResult> thenSource, IEnumerable<TResult> elseSource)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (condition == null)
-                throw new ArgumentNullException(nameof(condition));
-            if (thenSource == null)
-                throw new ArgumentNullException(nameof(thenSource));
-            if (elseSource == null)
-                throw new ArgumentNullException(nameof(elseSource));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.If<TResult>(default(IQueryProvider), default(Expression<Func<bool>>), default(IEnumerable<TResult>), default(IEnumerable<TResult>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    condition,
-                    GetSourceExpression(thenSource),
-                    GetSourceExpression(elseSource)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> If<TResult>(Func<bool> condition, IEnumerable<TResult> thenSource, IEnumerable<TResult> elseSource)
-        {
-            return EnumerableEx.If(condition, thenSource, elseSource).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns an enumerable sequence if the evaluation result of the given condition is true, otherwise returns an empty sequence.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="condition">Condition to evaluate.</param>
-        /// <param name="thenSource">Sequence to return in case the condition evaluates true.</param>
-        /// <returns>The given input sequence if the condition evaluates true; otherwise, an empty sequence.</returns>
-        public static IQueryable<TResult> If<TResult>(this IQueryProvider provider, Expression<Func<bool>> condition, IEnumerable<TResult> thenSource)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (condition == null)
-                throw new ArgumentNullException(nameof(condition));
-            if (thenSource == null)
-                throw new ArgumentNullException(nameof(thenSource));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.If<TResult>(default(IQueryProvider), default(Expression<Func<bool>>), default(IEnumerable<TResult>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    condition,
-                    GetSourceExpression(thenSource)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> If<TResult>(Func<bool> condition, IEnumerable<TResult> thenSource)
-        {
-            return EnumerableEx.If(condition, thenSource).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates an enumerable sequence by repeating a source sequence as long as the given loop postcondition holds.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="source">Source sequence to repeat while the condition evaluates true.</param>
-        /// <param name="condition">Loop condition.</param>
-        /// <returns>Sequence generated by repeating the given sequence until the condition evaluates to false.</returns>
-        public static IQueryable<TResult> DoWhile<TResult>(this IQueryable<TResult> source, Expression<Func<bool>> condition)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (condition == null)
-                throw new ArgumentNullException(nameof(condition));
-
-            return source.Provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.DoWhile<TResult>(default(IQueryable<TResult>), default(Expression<Func<bool>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    source.Expression,
-                    condition
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TResult> DoWhile<TResult>(IEnumerable<TResult> source, Func<bool> condition)
-        {
-            return EnumerableEx.DoWhile(source, condition);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns a sequence from a dictionary based on the result of evaluating a selector function.
-        /// </summary>
-        /// <typeparam name="TValue">Type of the selector value.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="selector">Selector function used to pick a sequence from the given sources.</param>
-        /// <param name="sources">Dictionary mapping selector values onto resulting sequences.</param>
-        /// <returns>The source sequence corresponding with the evaluated selector value; otherwise, an empty sequence.</returns>
-        public static IQueryable<TResult> Case<TValue, TResult>(this IQueryProvider provider, Expression<Func<TValue>> selector, IDictionary<TValue, IEnumerable<TResult>> sources)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-            if (sources == null)
-                throw new ArgumentNullException(nameof(sources));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Case<TValue, TResult>(default(IQueryProvider), default(Expression<Func<TValue>>), default(IDictionary<TValue, IEnumerable<TResult>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TValue), typeof(TResult)),
-#endif
-                    selector,
-                    Expression.Constant(sources, typeof(IDictionary<TValue, IEnumerable<TResult>>))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Case<TValue, TResult>(Func<TValue> selector, IDictionary<TValue, IEnumerable<TResult>> sources)
-        {
-            return EnumerableEx.Case(selector, sources).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns a sequence from a dictionary based on the result of evaluating a selector function, also specifying a default sequence.
-        /// </summary>
-        /// <typeparam name="TValue">Type of the selector value.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="selector">Selector function used to pick a sequence from the given sources.</param>
-        /// <param name="sources">Dictionary mapping selector values onto resulting sequences.</param>
-        /// <param name="defaultSource">Default sequence to return in case there's no corresponding source for the computed selector value.</param>
-        /// <returns>The source sequence corresponding with the evaluated selector value; otherwise, the default source.</returns>
-        public static IQueryable<TResult> Case<TValue, TResult>(this IQueryProvider provider, Expression<Func<TValue>> selector, IDictionary<TValue, IEnumerable<TResult>> sources, IEnumerable<TResult> defaultSource)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-            if (sources == null)
-                throw new ArgumentNullException(nameof(sources));
-            if (defaultSource == null)
-                throw new ArgumentNullException(nameof(defaultSource));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Case<TValue, TResult>(default(IQueryProvider), default(Expression<Func<TValue>>), default(IDictionary<TValue, IEnumerable<TResult>>), default(IEnumerable<TResult>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TValue), typeof(TResult)),
-#endif
-                    selector,
-                    Expression.Constant(sources, typeof(IDictionary<TValue, IEnumerable<TResult>>))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Case<TValue, TResult>(Func<TValue> selector, IDictionary<TValue, IEnumerable<TResult>> sources, IEnumerable<TResult> defaultSource)
-        {
-            return EnumerableEx.Case(selector, sources, defaultSource).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence by enumerating a source sequence, mapping its elements on result sequences, and concatenating those sequences.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="resultSelector">Result selector to evaluate for each iteration over the source.</param>
-        /// <returns>Sequence concatenating the inner sequences that result from evaluating the result selector on elements from the source.</returns>
-        public static IQueryable<TResult> For<TSource, TResult>(this IQueryProvider provider, IEnumerable<TSource> source, Expression<Func<TSource, IEnumerable<TResult>>> resultSelector)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (resultSelector == null)
-                throw new ArgumentNullException(nameof(resultSelector));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.For<TSource, TResult>(default(IQueryProvider), default(IEnumerable<TSource>), default(Expression<Func<TSource, IEnumerable<TResult>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)),
-#endif
-                    GetSourceExpression(source),
-                    resultSelector
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> For<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> resultSelector)
-        {
-            return EnumerableEx.For(source, resultSelector).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Concatenates the input sequences.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="sources">Source sequences.</param>
-        /// <returns>Sequence with the elements of the source sequences concatenated.</returns>
         public static IQueryable<TSource> Concat<TSource>(this IQueryable<IEnumerable<TSource>> sources)
         {
             if (sources == null)
                 throw new ArgumentNullException(nameof(sources));
 
-            return sources.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Concat<TSource>(default(IQueryable<IEnumerable<TSource>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    GetSourceExpression(sources)
-                )
-            );
+            return sources.Provider.CreateQuery<TSource>(Expression.Call(Concat__TSource__1__0(typeof(TSource)), sources.Expression));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> Concat<TSource>(IEnumerable<IEnumerable<TSource>> sources)
         {
-            return EnumerableEx.Concat(sources);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Concatenates the input sequences.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="sources">Source sequences.</param>
-        /// <returns>Sequence with the elements of the source sequences concatenated.</returns>
-        public static IQueryable<TSource> Concat<TSource>(this IQueryProvider provider, params IEnumerable<TSource>[] sources)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            if (sources == null)
-                throw new ArgumentNullException(nameof(sources));
-
-            return provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Concat<TSource>(default(IQueryProvider), default(IEnumerable<TSource>[]))),
+#if REFERENCE_ASSEMBLY
+            return default;
 #else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+            return EnumerableEx.Concat<TSource>(sources);
 #endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    GetSourceExpression(sources)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TSource> Concat<TSource>(params IEnumerable<TSource>[] sources)
-        {
-            return EnumerableEx.Concat(sources).AsQueryable();
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Projects each element of a sequence to an given sequence and flattens the resulting sequences into one sequence.
-        /// </summary>
-        /// <typeparam name="TSource">First source sequence element type.</typeparam>
-        /// <typeparam name="TOther">Second source sequence element type.</typeparam>
-        /// <param name="source">A sequence of values to project.</param>
-        /// <param name="other">Inner sequence each source sequenec element is projected onto.</param>
-        /// <returns>Sequence flattening the sequences that result from projecting elements in the source sequence.</returns>
-        public static IQueryable<TOther> SelectMany<TSource, TOther>(this IQueryable<TSource> source, IEnumerable<TOther> other)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+        private static MethodInfo s_Distinct__TSource_TKey__2__0;
+        
+        private static MethodInfo Distinct__TSource_TKey__2__0(Type TSource, Type TKey) =>
+            (s_Distinct__TSource_TKey__2__0 ??
+            (s_Distinct__TSource_TKey__2__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IQueryable<TSource>>(Distinct<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
 
-            return source.Provider.CreateQuery<TOther>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.SelectMany<TSource, TOther>(default(IQueryable<TSource>), default(IEnumerable<TOther>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TOther)),
-#endif
-                    source.Expression,
-                    GetSourceExpression(other)
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TOther> SelectMany<TSource, TOther>(IEnumerable<TSource> source, IEnumerable<TOther> other)
-        {
-            return EnumerableEx.SelectMany(source, other);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Hides the enumerable sequence object identity.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <returns>Enumerable sequence with the same behavior as the original, but hiding the source object identity.</returns>
-        /// <remarks>AsQueryable doesn't hide the object identity, and simply acts as a cast to the IQueryable&lt;TSource&gt; interface.</remarks>
-        public static IQueryable<TSource> Hide<TSource>(this IQueryable<TSource> source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Hide<TSource>(default(IQueryable<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Hide<TSource>(IEnumerable<TSource> source)
-        {
-            return EnumerableEx.Hide(source);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Lazily invokes an action for each value in the sequence.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="onNext">Action to invoke for each element.</param>
-        /// <returns>Sequence exhibiting the specified side-effects upon enumeration.</returns>
-        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (onNext == null)
-                throw new ArgumentNullException(nameof(onNext));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Do<TSource>(default(IQueryable<TSource>), default(Expression<Action<TSource>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    onNext
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext)
-        {
-            return EnumerableEx.Do(source, onNext);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Lazily invokes an action for each value in the sequence, and executes an action for successful termination.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="onNext">Action to invoke for each element.</param>
-        /// <param name="onCompleted">Action to invoke on successful termination of the sequence.</param>
-        /// <returns>Sequence exhibiting the specified side-effects upon enumeration.</returns>
-        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext, Expression<Action> onCompleted)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (onNext == null)
-                throw new ArgumentNullException(nameof(onNext));
-            if (onCompleted == null)
-                throw new ArgumentNullException(nameof(onCompleted));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Do<TSource>(default(IQueryable<TSource>), default(Expression<Action<TSource>>), default(Expression<Action>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    onNext,
-                    onCompleted
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext, Action onCompleted)
-        {
-            return EnumerableEx.Do(source, onNext, onCompleted);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Lazily invokes an action for each value in the sequence, and executes an action upon exceptional termination.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="onNext">Action to invoke for each element.</param>
-        /// <param name="onError">Action to invoke on exceptional termination of the sequence.</param>
-        /// <returns>Sequence exhibiting the specified side-effects upon enumeration.</returns>
-        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext, Expression<Action<Exception>> onError)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (onNext == null)
-                throw new ArgumentNullException(nameof(onNext));
-            if (onError == null)
-                throw new ArgumentNullException(nameof(onError));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Do<TSource>(default(IQueryable<TSource>), default(Expression<Action<TSource>>), default(Expression<Action<Exception>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    onNext,
-                    onError
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError)
-        {
-            return EnumerableEx.Do(source, onNext, onError);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Lazily invokes an action for each value in the sequence, and executes an action upon successful or exceptional termination.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="onNext">Action to invoke for each element.</param>
-        /// <param name="onError">Action to invoke on exceptional termination of the sequence.</param>
-        /// <param name="onCompleted">Action to invoke on successful termination of the sequence.</param>
-        /// <returns>Sequence exhibiting the specified side-effects upon enumeration.</returns>
-        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext, Expression<Action<Exception>> onError, Expression<Action> onCompleted)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (onNext == null)
-                throw new ArgumentNullException(nameof(onNext));
-            if (onError == null)
-                throw new ArgumentNullException(nameof(onError));
-            if (onCompleted == null)
-                throw new ArgumentNullException(nameof(onCompleted));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Do<TSource>(default(IQueryable<TSource>), default(Expression<Action<TSource>>), default(Expression<Action<Exception>>), default(Expression<Action>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    onNext,
-                    onError,
-                    onCompleted
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError, Action onCompleted)
-        {
-            return EnumerableEx.Do(source, onNext, onError, onCompleted);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Lazily invokes observer methods for each value in the sequence, and upon successful or exceptional termination.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="observer">Observer to invoke notification calls on.</param>
-        /// <returns>Sequence exhibiting the side-effects of observer method invocation upon enumeration.</returns>
-        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, IObserver<TSource> observer)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (observer == null)
-                throw new ArgumentNullException(nameof(observer));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Do<TSource>(default(IQueryable<TSource>), default(IObserver<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(observer, typeof(IObserver<TSource>))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, IObserver<TSource> observer)
-        {
-            return EnumerableEx.Do(source, observer);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence of non-overlapping adjacent buffers over the source sequence.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="count">Number of elements for allocated buffers.</param>
-        /// <returns>Sequence of buffers containing source sequence elements.</returns>
-        public static IQueryable<IList<TSource>> Buffer<TSource>(this IQueryable<TSource> source, int count)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.Provider.CreateQuery<IList<TSource>>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Buffer<TSource>(default(IQueryable<TSource>), default(int))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(count, typeof(int))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<IList<TSource>> Buffer<TSource>(IEnumerable<TSource> source, int count)
-        {
-            return EnumerableEx.Buffer(source, count);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence of buffers over the source sequence, with specified length and possible overlap.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="count">Number of elements for allocated buffers.</param>
-        /// <param name="skip">Number of elements to skip between the start of consecutive buffers.</param>
-        /// <returns>Sequence of buffers containing source sequence elements.</returns>
-        public static IQueryable<IList<TSource>> Buffer<TSource>(this IQueryable<TSource> source, int count, int skip)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.Provider.CreateQuery<IList<TSource>>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Buffer<TSource>(default(IQueryable<TSource>), default(int), default(int))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(count, typeof(int)),
-                    Expression.Constant(skip, typeof(int))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<IList<TSource>> Buffer<TSource>(IEnumerable<TSource> source, int count, int skip)
-        {
-            return EnumerableEx.Buffer(source, count, skip);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Ignores all elements in the source sequence.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <returns>Source sequence without its elements.</returns>
-        public static IQueryable<TSource> IgnoreElements<TSource>(this IQueryable<TSource> source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.IgnoreElements<TSource>(default(IQueryable<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> IgnoreElements<TSource>(IEnumerable<TSource> source)
-        {
-            return EnumerableEx.IgnoreElements(source);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Returns elements with a distinct key value by using the default equality comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector.</param>
-        /// <returns>Sequence that contains the elements from the source sequence with distinct key values.</returns>
         public static IQueryable<TSource> Distinct<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
             if (source == null)
@@ -1768,37 +184,27 @@ namespace System.Linq
             if (keySelector == null)
                 throw new ArgumentNullException(nameof(keySelector));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Distinct<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
-#endif
-                    source.Expression,
-                    keySelector
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Distinct__TSource_TKey__2__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> Distinct<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
-            return EnumerableEx.Distinct(source, keySelector);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Distinct<TSource, TKey>(source, keySelector);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns elements with a distinct key value by using the specified equality comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector.</param>
-        /// <param name="comparer">Comparer used to compare key values.</param>
-        /// <returns>Sequence that contains the elements from the source sequence with distinct key values.</returns>
+        private static MethodInfo s_Distinct__TSource_TKey__3__0;
+        
+        private static MethodInfo Distinct__TSource_TKey__3__0(Type TSource, Type TKey) =>
+            (s_Distinct__TSource_TKey__3__0 ??
+            (s_Distinct__TSource_TKey__3__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IEqualityComparer<TKey>, IQueryable<TSource>>(Distinct<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
+
         public static IQueryable<TSource> Distinct<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IEqualityComparer<TKey> comparer)
         {
             if (source == null)
@@ -1808,68 +214,53 @@ namespace System.Linq
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Distinct<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>), default(IEqualityComparer<TKey>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
-#endif
-                    source.Expression,
-                    keySelector,
-                    Expression.Constant(comparer, typeof(IEqualityComparer<TKey>))
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Distinct__TSource_TKey__3__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector, Expression.Constant(comparer, typeof(IEqualityComparer<TKey>))));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> Distinct<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
         {
-            return EnumerableEx.Distinct(source, keySelector, comparer);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Distinct<TSource, TKey>(source, keySelector, comparer);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns consecutive distinct elements by using the default equality comparer to compare values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <returns>Sequence without adjacent non-distinct elements.</returns>
+        private static MethodInfo s_DistinctUntilChanged__TSource__1__0;
+        
+        private static MethodInfo DistinctUntilChanged__TSource__1__0(Type TSource) =>
+            (s_DistinctUntilChanged__TSource__1__0 ??
+            (s_DistinctUntilChanged__TSource__1__0 = new Func<IQueryable<TSource>, IQueryable<TSource>>(DistinctUntilChanged<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
         public static IQueryable<TSource> DistinctUntilChanged<TSource>(this IQueryable<TSource> source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.DistinctUntilChanged<TSource>(default(IQueryable<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(DistinctUntilChanged__TSource__1__0(typeof(TSource)), source.Expression));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> DistinctUntilChanged<TSource>(IEnumerable<TSource> source)
         {
-            return EnumerableEx.DistinctUntilChanged(source);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.DistinctUntilChanged<TSource>(source);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns consecutive distinct elements by using the specified equality comparer to compare values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="comparer">Comparer used to compare values.</param>
-        /// <returns>Sequence without adjacent non-distinct elements.</returns>
+        private static MethodInfo s_DistinctUntilChanged__TSource__2__0;
+        
+        private static MethodInfo DistinctUntilChanged__TSource__2__0(Type TSource) =>
+            (s_DistinctUntilChanged__TSource__2__0 ??
+            (s_DistinctUntilChanged__TSource__2__0 = new Func<IQueryable<TSource>, IEqualityComparer<TSource>, IQueryable<TSource>>(DistinctUntilChanged<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
         public static IQueryable<TSource> DistinctUntilChanged<TSource>(this IQueryable<TSource> source, IEqualityComparer<TSource> comparer)
         {
             if (source == null)
@@ -1877,36 +268,27 @@ namespace System.Linq
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.DistinctUntilChanged<TSource>(default(IQueryable<TSource>), default(IEqualityComparer<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(comparer, typeof(IEqualityComparer<TSource>))
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(DistinctUntilChanged__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(comparer, typeof(IEqualityComparer<TSource>))));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> DistinctUntilChanged<TSource>(IEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
         {
-            return EnumerableEx.DistinctUntilChanged(source, comparer);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.DistinctUntilChanged<TSource>(source, comparer);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns consecutive distinct elements based on a key value by using the specified equality comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector.</param>
-        /// <returns>Sequence without adjacent non-distinct elements.</returns>
+        private static MethodInfo s_DistinctUntilChanged__TSource_TKey__2__0;
+        
+        private static MethodInfo DistinctUntilChanged__TSource_TKey__2__0(Type TSource, Type TKey) =>
+            (s_DistinctUntilChanged__TSource_TKey__2__0 ??
+            (s_DistinctUntilChanged__TSource_TKey__2__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IQueryable<TSource>>(DistinctUntilChanged<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
+
         public static IQueryable<TSource> DistinctUntilChanged<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
         {
             if (source == null)
@@ -1914,37 +296,27 @@ namespace System.Linq
             if (keySelector == null)
                 throw new ArgumentNullException(nameof(keySelector));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.DistinctUntilChanged<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
-#endif
-                    source.Expression,
-                    keySelector
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(DistinctUntilChanged__TSource_TKey__2__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> DistinctUntilChanged<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
-            return EnumerableEx.DistinctUntilChanged(source, keySelector);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.DistinctUntilChanged<TSource, TKey>(source, keySelector);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns consecutive distinct elements based on a key value by using the specified equality comparer to compare key values.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TKey">Key type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="keySelector">Key selector.</param>
-        /// <param name="comparer">Comparer used to compare key values.</param>
-        /// <returns>Sequence without adjacent non-distinct elements.</returns>
+        private static MethodInfo s_DistinctUntilChanged__TSource_TKey__3__0;
+        
+        private static MethodInfo DistinctUntilChanged__TSource_TKey__3__0(Type TSource, Type TKey) =>
+            (s_DistinctUntilChanged__TSource_TKey__3__0 ??
+            (s_DistinctUntilChanged__TSource_TKey__3__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IEqualityComparer<TKey>, IQueryable<TSource>>(DistinctUntilChanged<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
+
         public static IQueryable<TSource> DistinctUntilChanged<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IEqualityComparer<TKey> comparer)
         {
             if (source == null)
@@ -1954,36 +326,203 @@ namespace System.Linq
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.DistinctUntilChanged<TSource, TKey>(default(IQueryable<TSource>), default(Expression<Func<TSource, TKey>>), default(IEqualityComparer<TKey>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)),
-#endif
-                    source.Expression,
-                    keySelector,
-                    Expression.Constant(comparer, typeof(IEqualityComparer<TKey>))
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(DistinctUntilChanged__TSource_TKey__3__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector, Expression.Constant(comparer, typeof(IEqualityComparer<TKey>))));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> DistinctUntilChanged<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
         {
-            return EnumerableEx.DistinctUntilChanged(source, keySelector, comparer);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.DistinctUntilChanged<TSource, TKey>(source, keySelector, comparer);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Expands the sequence by recursively applying a selector function.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="selector">Selector function to retrieve the next sequence to expand.</param>
-        /// <returns>Sequence with results from the recursive expansion of the source sequence.</returns>
+        private static MethodInfo s_Do__TSource__2__0;
+        
+        private static MethodInfo Do__TSource__2__0(Type TSource) =>
+            (s_Do__TSource__2__0 ??
+            (s_Do__TSource__2__0 = new Func<IQueryable<TSource>, Expression<Action<TSource>>, IQueryable<TSource>>(Do<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (onNext == null)
+                throw new ArgumentNullException(nameof(onNext));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Do__TSource__2__0(typeof(TSource)), source.Expression, onNext));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Do<TSource>(source, onNext);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Do__TSource__2__1;
+        
+        private static MethodInfo Do__TSource__2__1(Type TSource) =>
+            (s_Do__TSource__2__1 ??
+            (s_Do__TSource__2__1 = new Func<IQueryable<TSource>, IObserver<TSource>, IQueryable<TSource>>(Do<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, IObserver<TSource> observer)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (observer == null)
+                throw new ArgumentNullException(nameof(observer));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Do__TSource__2__1(typeof(TSource)), source.Expression, Expression.Constant(observer, typeof(IObserver<TSource>))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, IObserver<TSource> observer)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Do<TSource>(source, observer);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Do__TSource__3__0;
+        
+        private static MethodInfo Do__TSource__3__0(Type TSource) =>
+            (s_Do__TSource__3__0 ??
+            (s_Do__TSource__3__0 = new Func<IQueryable<TSource>, Expression<Action<TSource>>, Action, IQueryable<TSource>>(Do<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext, Action onCompleted)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (onNext == null)
+                throw new ArgumentNullException(nameof(onNext));
+            if (onCompleted == null)
+                throw new ArgumentNullException(nameof(onCompleted));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Do__TSource__3__0(typeof(TSource)), source.Expression, onNext, Expression.Constant(onCompleted, typeof(Action))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext, Action onCompleted)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Do<TSource>(source, onNext, onCompleted);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Do__TSource__3__1;
+        
+        private static MethodInfo Do__TSource__3__1(Type TSource) =>
+            (s_Do__TSource__3__1 ??
+            (s_Do__TSource__3__1 = new Func<IQueryable<TSource>, Expression<Action<TSource>>, Expression<Action<Exception>>, IQueryable<TSource>>(Do<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext, Expression<Action<Exception>> onError)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (onNext == null)
+                throw new ArgumentNullException(nameof(onNext));
+            if (onError == null)
+                throw new ArgumentNullException(nameof(onError));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Do__TSource__3__1(typeof(TSource)), source.Expression, onNext, onError));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Do<TSource>(source, onNext, onError);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Do__TSource__4__0;
+        
+        private static MethodInfo Do__TSource__4__0(Type TSource) =>
+            (s_Do__TSource__4__0 ??
+            (s_Do__TSource__4__0 = new Func<IQueryable<TSource>, Expression<Action<TSource>>, Expression<Action<Exception>>, Action, IQueryable<TSource>>(Do<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Do<TSource>(this IQueryable<TSource> source, Expression<Action<TSource>> onNext, Expression<Action<Exception>> onError, Action onCompleted)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (onNext == null)
+                throw new ArgumentNullException(nameof(onNext));
+            if (onError == null)
+                throw new ArgumentNullException(nameof(onError));
+            if (onCompleted == null)
+                throw new ArgumentNullException(nameof(onCompleted));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Do__TSource__4__0(typeof(TSource)), source.Expression, onNext, onError, Expression.Constant(onCompleted, typeof(Action))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Do<TSource>(IEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError, Action onCompleted)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Do<TSource>(source, onNext, onError, onCompleted);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_DoWhile__TResult__2__0;
+        
+        private static MethodInfo DoWhile__TResult__2__0(Type TResult) =>
+            (s_DoWhile__TResult__2__0 ??
+            (s_DoWhile__TResult__2__0 = new Func<IQueryable<TResult>, Expression<Func<bool>>, IQueryable<TResult>>(DoWhile<TResult>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TResult);
+
+        public static IQueryable<TResult> DoWhile<TResult>(this IQueryable<TResult> source, Expression<Func<bool>> condition)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (condition == null)
+                throw new ArgumentNullException(nameof(condition));
+
+            return source.Provider.CreateQuery<TResult>(Expression.Call(DoWhile__TResult__2__0(typeof(TResult)), source.Expression, condition));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TResult> DoWhile<TResult>(IEnumerable<TResult> source, Func<bool> condition)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.DoWhile<TResult>(source, condition);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Expand__TSource__2__0;
+        
+        private static MethodInfo Expand__TSource__2__0(Type TSource) =>
+            (s_Expand__TSource__2__0 ??
+            (s_Expand__TSource__2__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, IEnumerable<TSource>>>, IQueryable<TSource>>(Expand<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
         public static IQueryable<TSource> Expand<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, IEnumerable<TSource>>> selector)
         {
             if (source == null)
@@ -1991,108 +530,547 @@ namespace System.Linq
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Expand<TSource>(default(IQueryable<TSource>), default(Expression<Func<TSource, IEnumerable<TSource>>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    selector
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Expand__TSource__2__0(typeof(TSource)), source.Expression, selector));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> Expand<TSource>(IEnumerable<TSource> source, Func<TSource, IEnumerable<TSource>> selector)
         {
-            return EnumerableEx.Expand(source, selector);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Expand<TSource>(source, selector);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns the source sequence prefixed with the specified value.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="values">Values to prefix the sequence with.</param>
-        /// <returns>Sequence starting with the specified prefix value, followed by the source sequence.</returns>
-        public static IQueryable<TSource> StartWith<TSource>(this IQueryable<TSource> source, params TSource[] values)
+        private static MethodInfo s_Finally__TSource__2__0;
+        
+        private static MethodInfo Finally__TSource__2__0(Type TSource) =>
+            (s_Finally__TSource__2__0 ??
+            (s_Finally__TSource__2__0 = new Func<IQueryable<TSource>, Action, IQueryable<TSource>>(Finally<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Finally<TSource>(this IQueryable<TSource> source, Action finallyAction)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
+            if (finallyAction == null)
+                throw new ArgumentNullException(nameof(finallyAction));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.StartWith<TSource>(default(IQueryable<TSource>), default(TSource[]))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(values, typeof(TSource[]))
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Finally__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(finallyAction, typeof(Action))));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> StartWith<TSource>(IEnumerable<TSource> source, params TSource[] values)
+        public static IEnumerable<TSource> Finally<TSource>(IEnumerable<TSource> source, Action finallyAction)
         {
-            return EnumerableEx.StartWith(source, values);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Finally<TSource>(source, finallyAction);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Generates a sequence of accumulated values by scanning the source sequence and applying an accumulator function.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <typeparam name="TAccumulate">Accumulation type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="seed">Accumulator seed value.</param>
-        /// <param name="accumulator">Accumulation function to apply to the current accumulation value and each element of the sequence.</param>
-        /// <returns>Sequence with all intermediate accumulation values resulting from scanning the sequence.</returns>
-        public static IQueryable<TAccumulate> Scan<TSource, TAccumulate>(this IQueryable<TSource> source, TAccumulate seed, Expression<Func<TAccumulate, TSource, TAccumulate>> accumulator)
+        private static MethodInfo s_Hide__TSource__1__0;
+        
+        private static MethodInfo Hide__TSource__1__0(Type TSource) =>
+            (s_Hide__TSource__1__0 ??
+            (s_Hide__TSource__1__0 = new Func<IQueryable<TSource>, IQueryable<TSource>>(Hide<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Hide<TSource>(this IQueryable<TSource> source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
-            if (accumulator == null)
-                throw new ArgumentNullException(nameof(accumulator));
 
-            return source.Provider.CreateQuery<TAccumulate>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Scan<TSource, TAccumulate>(default(IQueryable<TSource>), default(TAccumulate), default(Expression<Func<TAccumulate, TSource, TAccumulate>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TAccumulate)),
-#endif
-                    source.Expression,
-                    Expression.Constant(seed, typeof(TAccumulate)),
-                    accumulator
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Hide__TSource__1__0(typeof(TSource)), source.Expression));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TAccumulate> Scan<TSource, TAccumulate>(IEnumerable<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> accumulator)
+        public static IEnumerable<TSource> Hide<TSource>(IEnumerable<TSource> source)
         {
-            return EnumerableEx.Scan(source, seed, accumulator);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Hide<TSource>(source);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Generates a sequence of accumulated values by scanning the source sequence and applying an accumulator function.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="accumulator">Accumulation function to apply to the current accumulation value and each element of the sequence.</param>
-        /// <returns>Sequence with all intermediate accumulation values resulting from scanning the sequence.</returns>
+        private static MethodInfo s_IgnoreElements__TSource__1__0;
+        
+        private static MethodInfo IgnoreElements__TSource__1__0(Type TSource) =>
+            (s_IgnoreElements__TSource__1__0 ??
+            (s_IgnoreElements__TSource__1__0 = new Func<IQueryable<TSource>, IQueryable<TSource>>(IgnoreElements<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> IgnoreElements<TSource>(this IQueryable<TSource> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(IgnoreElements__TSource__1__0(typeof(TSource)), source.Expression));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> IgnoreElements<TSource>(IEnumerable<TSource> source)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.IgnoreElements<TSource>(source);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_IsEmpty__TSource__1__0;
+        
+        private static MethodInfo IsEmpty__TSource__1__0(Type TSource) =>
+            (s_IsEmpty__TSource__1__0 ??
+            (s_IsEmpty__TSource__1__0 = new Func<IQueryable<TSource>, bool>(IsEmpty<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static bool IsEmpty<TSource>(this IQueryable<TSource> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.Provider.Execute<bool>(Expression.Call(IsEmpty__TSource__1__0(typeof(TSource)), source.Expression));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static bool IsEmpty<TSource>(IEnumerable<TSource> source)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.IsEmpty<TSource>(source);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Max__TSource__2__0;
+        
+        private static MethodInfo Max__TSource__2__0(Type TSource) =>
+            (s_Max__TSource__2__0 ??
+            (s_Max__TSource__2__0 = new Func<IQueryable<TSource>, IComparer<TSource>, TSource>(Max<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static TSource Max<TSource>(this IQueryable<TSource> source, IComparer<TSource> comparer)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            return source.Provider.Execute<TSource>(Expression.Call(Max__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(comparer, typeof(IComparer<TSource>))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static TSource Max<TSource>(IEnumerable<TSource> source, IComparer<TSource> comparer)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Max<TSource>(source, comparer);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_MaxBy__TSource_TKey__2__0;
+        
+        private static MethodInfo MaxBy__TSource_TKey__2__0(Type TSource, Type TKey) =>
+            (s_MaxBy__TSource_TKey__2__0 ??
+            (s_MaxBy__TSource_TKey__2__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IList<TSource>>(MaxBy<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
+
+        public static IList<TSource> MaxBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+
+            return source.Provider.Execute<IList<TSource>>(Expression.Call(MaxBy__TSource_TKey__2__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IList<TSource> MaxBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.MaxBy<TSource, TKey>(source, keySelector);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_MaxBy__TSource_TKey__3__0;
+        
+        private static MethodInfo MaxBy__TSource_TKey__3__0(Type TSource, Type TKey) =>
+            (s_MaxBy__TSource_TKey__3__0 ??
+            (s_MaxBy__TSource_TKey__3__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IComparer<TKey>, IList<TSource>>(MaxBy<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
+
+        public static IList<TSource> MaxBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            return source.Provider.Execute<IList<TSource>>(Expression.Call(MaxBy__TSource_TKey__3__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector, Expression.Constant(comparer, typeof(IComparer<TKey>))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IList<TSource> MaxBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.MaxBy<TSource, TKey>(source, keySelector, comparer);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Memoize__TSource_TResult__2__0;
+        
+        private static MethodInfo Memoize__TSource_TResult__2__0(Type TSource, Type TResult) =>
+            (s_Memoize__TSource_TResult__2__0 ??
+            (s_Memoize__TSource_TResult__2__0 = new Func<IQueryable<TSource>, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>, IQueryable<TResult>>(Memoize<TSource, TResult>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TResult);
+
+        public static IQueryable<TResult> Memoize<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.Provider.CreateQuery<TResult>(Expression.Call(Memoize__TSource_TResult__2__0(typeof(TSource), typeof(TResult)), source.Expression, selector));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TResult> Memoize<TSource, TResult>(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Memoize<TSource, TResult>(source, selector);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Memoize__TSource_TResult__3__0;
+        
+        private static MethodInfo Memoize__TSource_TResult__3__0(Type TSource, Type TResult) =>
+            (s_Memoize__TSource_TResult__3__0 ??
+            (s_Memoize__TSource_TResult__3__0 = new Func<IQueryable<TSource>, int, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>, IQueryable<TResult>>(Memoize<TSource, TResult>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TResult);
+
+        public static IQueryable<TResult> Memoize<TSource, TResult>(this IQueryable<TSource> source, int readerCount, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.Provider.CreateQuery<TResult>(Expression.Call(Memoize__TSource_TResult__3__0(typeof(TSource), typeof(TResult)), source.Expression, Expression.Constant(readerCount, typeof(int)), selector));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TResult> Memoize<TSource, TResult>(IEnumerable<TSource> source, int readerCount, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Memoize<TSource, TResult>(source, readerCount, selector);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Min__TSource__2__0;
+        
+        private static MethodInfo Min__TSource__2__0(Type TSource) =>
+            (s_Min__TSource__2__0 ??
+            (s_Min__TSource__2__0 = new Func<IQueryable<TSource>, IComparer<TSource>, TSource>(Min<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static TSource Min<TSource>(this IQueryable<TSource> source, IComparer<TSource> comparer)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            return source.Provider.Execute<TSource>(Expression.Call(Min__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(comparer, typeof(IComparer<TSource>))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static TSource Min<TSource>(IEnumerable<TSource> source, IComparer<TSource> comparer)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Min<TSource>(source, comparer);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_MinBy__TSource_TKey__2__0;
+        
+        private static MethodInfo MinBy__TSource_TKey__2__0(Type TSource, Type TKey) =>
+            (s_MinBy__TSource_TKey__2__0 ??
+            (s_MinBy__TSource_TKey__2__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IList<TSource>>(MinBy<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
+
+        public static IList<TSource> MinBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+
+            return source.Provider.Execute<IList<TSource>>(Expression.Call(MinBy__TSource_TKey__2__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IList<TSource> MinBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.MinBy<TSource, TKey>(source, keySelector);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_MinBy__TSource_TKey__3__0;
+        
+        private static MethodInfo MinBy__TSource_TKey__3__0(Type TSource, Type TKey) =>
+            (s_MinBy__TSource_TKey__3__0 ??
+            (s_MinBy__TSource_TKey__3__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TKey>>, IComparer<TKey>, IList<TSource>>(MinBy<TSource, TKey>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TKey);
+
+        public static IList<TSource> MinBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            return source.Provider.Execute<IList<TSource>>(Expression.Call(MinBy__TSource_TKey__3__0(typeof(TSource), typeof(TKey)), source.Expression, keySelector, Expression.Constant(comparer, typeof(IComparer<TKey>))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IList<TSource> MinBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.MinBy<TSource, TKey>(source, keySelector, comparer);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_OnErrorResumeNext__TSource__1__0;
+        
+        private static MethodInfo OnErrorResumeNext__TSource__1__0(Type TSource) =>
+            (s_OnErrorResumeNext__TSource__1__0 ??
+            (s_OnErrorResumeNext__TSource__1__0 = new Func<IQueryable<IEnumerable<TSource>>, IQueryable<TSource>>(OnErrorResumeNext<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> OnErrorResumeNext<TSource>(this IQueryable<IEnumerable<TSource>> sources)
+        {
+            if (sources == null)
+                throw new ArgumentNullException(nameof(sources));
+
+            return sources.Provider.CreateQuery<TSource>(Expression.Call(OnErrorResumeNext__TSource__1__0(typeof(TSource)), sources.Expression));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> OnErrorResumeNext<TSource>(IEnumerable<IEnumerable<TSource>> sources)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.OnErrorResumeNext<TSource>(sources);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_OnErrorResumeNext__TSource__2__0;
+        
+        private static MethodInfo OnErrorResumeNext__TSource__2__0(Type TSource) =>
+            (s_OnErrorResumeNext__TSource__2__0 ??
+            (s_OnErrorResumeNext__TSource__2__0 = new Func<IQueryable<TSource>, IEnumerable<TSource>, IQueryable<TSource>>(OnErrorResumeNext<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> OnErrorResumeNext<TSource>(this IQueryable<TSource> first, IEnumerable<TSource> second)
+        {
+            if (first == null)
+                throw new ArgumentNullException(nameof(first));
+            if (second == null)
+                throw new ArgumentNullException(nameof(second));
+
+            return first.Provider.CreateQuery<TSource>(Expression.Call(OnErrorResumeNext__TSource__2__0(typeof(TSource)), first.Expression, GetSourceExpression(second)));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> OnErrorResumeNext<TSource>(IEnumerable<TSource> first, IEnumerable<TSource> second)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.OnErrorResumeNext<TSource>(first, second);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Publish__TSource_TResult__2__0;
+        
+        private static MethodInfo Publish__TSource_TResult__2__0(Type TSource, Type TResult) =>
+            (s_Publish__TSource_TResult__2__0 ??
+            (s_Publish__TSource_TResult__2__0 = new Func<IQueryable<TSource>, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>, IQueryable<TResult>>(Publish<TSource, TResult>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TResult);
+
+        public static IQueryable<TResult> Publish<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.Provider.CreateQuery<TResult>(Expression.Call(Publish__TSource_TResult__2__0(typeof(TSource), typeof(TResult)), source.Expression, selector));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TResult> Publish<TSource, TResult>(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Publish<TSource, TResult>(source, selector);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Repeat__TSource__1__0;
+        
+        private static MethodInfo Repeat__TSource__1__0(Type TSource) =>
+            (s_Repeat__TSource__1__0 ??
+            (s_Repeat__TSource__1__0 = new Func<IQueryable<TSource>, IQueryable<TSource>>(Repeat<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Repeat<TSource>(this IQueryable<TSource> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Repeat__TSource__1__0(typeof(TSource)), source.Expression));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Repeat<TSource>(IEnumerable<TSource> source)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Repeat<TSource>(source);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Repeat__TSource__2__0;
+        
+        private static MethodInfo Repeat__TSource__2__0(Type TSource) =>
+            (s_Repeat__TSource__2__0 ??
+            (s_Repeat__TSource__2__0 = new Func<IQueryable<TSource>, int, IQueryable<TSource>>(Repeat<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Repeat<TSource>(this IQueryable<TSource> source, int count)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Repeat__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(count, typeof(int))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Repeat<TSource>(IEnumerable<TSource> source, int count)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Repeat<TSource>(source, count);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Retry__TSource__1__0;
+        
+        private static MethodInfo Retry__TSource__1__0(Type TSource) =>
+            (s_Retry__TSource__1__0 ??
+            (s_Retry__TSource__1__0 = new Func<IQueryable<TSource>, IQueryable<TSource>>(Retry<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Retry<TSource>(this IQueryable<TSource> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Retry__TSource__1__0(typeof(TSource)), source.Expression));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Retry<TSource>(IEnumerable<TSource> source)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Retry<TSource>(source);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Retry__TSource__2__0;
+        
+        private static MethodInfo Retry__TSource__2__0(Type TSource) =>
+            (s_Retry__TSource__2__0 ??
+            (s_Retry__TSource__2__0 = new Func<IQueryable<TSource>, int, IQueryable<TSource>>(Retry<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> Retry<TSource>(this IQueryable<TSource> source, int retryCount)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Retry__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(retryCount, typeof(int))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> Retry<TSource>(IEnumerable<TSource> source, int retryCount)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Retry<TSource>(source, retryCount);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Scan__TSource__2__0;
+        
+        private static MethodInfo Scan__TSource__2__0(Type TSource) =>
+            (s_Scan__TSource__2__0 ??
+            (s_Scan__TSource__2__0 = new Func<IQueryable<TSource>, Expression<Func<TSource, TSource, TSource>>, IQueryable<TSource>>(Scan<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
         public static IQueryable<TSource> Scan<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, TSource, TSource>> accumulator)
         {
             if (source == null)
@@ -2100,90 +1078,117 @@ namespace System.Linq
             if (accumulator == null)
                 throw new ArgumentNullException(nameof(accumulator));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Scan<TSource>(default(IQueryable<TSource>), default(Expression<Func<TSource, TSource, TSource>>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    accumulator
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(Scan__TSource__2__0(typeof(TSource)), source.Expression, accumulator));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEnumerable<TSource> Scan<TSource>(IEnumerable<TSource> source, Func<TSource, TSource, TSource> accumulator)
         {
-            return EnumerableEx.Scan(source, accumulator);
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Scan<TSource>(source, accumulator);
+#endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns a specified number of contiguous elements from the end of the sequence.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="count">The number of elements to take from the end of the sequence.</param>
-        /// <returns>Sequence with the specified number of elements counting from the end of the source sequence.</returns>
-        public static IQueryable<TSource> TakeLast<TSource>(this IQueryable<TSource> source, int count)
+        private static MethodInfo s_Scan__TSource_TAccumulate__3__0;
+        
+        private static MethodInfo Scan__TSource_TAccumulate__3__0(Type TSource, Type TAccumulate) =>
+            (s_Scan__TSource_TAccumulate__3__0 ??
+            (s_Scan__TSource_TAccumulate__3__0 = new Func<IQueryable<TSource>, TAccumulate, Expression<Func<TAccumulate, TSource, TAccumulate>>, IQueryable<TAccumulate>>(Scan<TSource, TAccumulate>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TAccumulate);
+
+        public static IQueryable<TAccumulate> Scan<TSource, TAccumulate>(this IQueryable<TSource> source, TAccumulate seed, Expression<Func<TAccumulate, TSource, TAccumulate>> accumulator)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
+            if (accumulator == null)
+                throw new ArgumentNullException(nameof(accumulator));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.TakeLast<TSource>(default(IQueryable<TSource>), default(int))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(count, typeof(int))
-                )
-            );
+            return source.Provider.CreateQuery<TAccumulate>(Expression.Call(Scan__TSource_TAccumulate__3__0(typeof(TSource), typeof(TAccumulate)), source.Expression, Expression.Constant(seed, typeof(TAccumulate)), accumulator));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> TakeLast<TSource>(IEnumerable<TSource> source, int count)
+        public static IEnumerable<TAccumulate> Scan<TSource, TAccumulate>(IEnumerable<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> accumulator)
         {
 #if REFERENCE_ASSEMBLY
-            return null;
+            return default;
 #else
-            return EnumerableEx.TakeLast(source, count);
+            return EnumerableEx.Scan<TSource, TAccumulate>(source, seed, accumulator);
 #endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Bypasses a specified number of contiguous elements from the end of the sequence and returns the remaining elements.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="count">The number of elements to skip from the end of the sequence before returning the remaining elements.</param>
-        /// <returns>Sequence bypassing the specified number of elements counting from the end of the source sequence.</returns>
+        private static MethodInfo s_SelectMany__TSource_TOther__2__0;
+        
+        private static MethodInfo SelectMany__TSource_TOther__2__0(Type TSource, Type TOther) =>
+            (s_SelectMany__TSource_TOther__2__0 ??
+            (s_SelectMany__TSource_TOther__2__0 = new Func<IQueryable<TSource>, IEnumerable<TOther>, IQueryable<TOther>>(SelectMany<TSource, TOther>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TOther);
+
+        public static IQueryable<TOther> SelectMany<TSource, TOther>(this IQueryable<TSource> source, IEnumerable<TOther> other)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            return source.Provider.CreateQuery<TOther>(Expression.Call(SelectMany__TSource_TOther__2__0(typeof(TSource), typeof(TOther)), source.Expression, GetSourceExpression(other)));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TOther> SelectMany<TSource, TOther>(IEnumerable<TSource> source, IEnumerable<TOther> other)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.SelectMany<TSource, TOther>(source, other);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_Share__TSource_TResult__2__0;
+        
+        private static MethodInfo Share__TSource_TResult__2__0(Type TSource, Type TResult) =>
+            (s_Share__TSource_TResult__2__0 ??
+            (s_Share__TSource_TResult__2__0 = new Func<IQueryable<TSource>, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>>, IQueryable<TResult>>(Share<TSource, TResult>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource, TResult);
+
+        public static IQueryable<TResult> Share<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<IEnumerable<TSource>, IEnumerable<TResult>>> selector)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.Provider.CreateQuery<TResult>(Expression.Call(Share__TSource_TResult__2__0(typeof(TSource), typeof(TResult)), source.Expression, selector));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TResult> Share<TSource, TResult>(IEnumerable<TSource> source, Func<IEnumerable<TSource>, IEnumerable<TResult>> selector)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.Share<TSource, TResult>(source, selector);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_SkipLast__TSource__2__0;
+        
+        private static MethodInfo SkipLast__TSource__2__0(Type TSource) =>
+            (s_SkipLast__TSource__2__0 ??
+            (s_SkipLast__TSource__2__0 = new Func<IQueryable<TSource>, int, IQueryable<TSource>>(SkipLast<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
         public static IQueryable<TSource> SkipLast<TSource>(this IQueryable<TSource> source, int count)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.SkipLast<TSource>(default(IQueryable<TSource>), default(int))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression,
-                    Expression.Constant(count, typeof(int))
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(SkipLast__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(count, typeof(int))));
         }
 
 #pragma warning disable 1591
@@ -2191,180 +1196,66 @@ namespace System.Linq
         public static IEnumerable<TSource> SkipLast<TSource>(IEnumerable<TSource> source, int count)
         {
 #if REFERENCE_ASSEMBLY
-            return null;
+            return default;
 #else
-            return EnumerableEx.SkipLast(source, count);
+            return EnumerableEx.SkipLast<TSource>(source, count);
 #endif
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Repeats and concatenates the source sequence infinitely.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <returns>Sequence obtained by concatenating the source sequence to itself infinitely.</returns>
-        public static IQueryable<TSource> Repeat<TSource>(this IQueryable<TSource> source)
+        private static MethodInfo s_StartWith__TSource__2__0;
+        
+        private static MethodInfo StartWith__TSource__2__0(Type TSource) =>
+            (s_StartWith__TSource__2__0 ??
+            (s_StartWith__TSource__2__0 = new Func<IQueryable<TSource>, TSource[], IQueryable<TSource>>(StartWith<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> StartWith<TSource>(this IQueryable<TSource> source, params TSource[] values)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+
+            return source.Provider.CreateQuery<TSource>(Expression.Call(StartWith__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(values, typeof(TSource[]))));
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEnumerable<TSource> StartWith<TSource>(IEnumerable<TSource> source, TSource[] values)
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return EnumerableEx.StartWith<TSource>(source, values);
+#endif
+        }
+#pragma warning restore 1591
+
+        private static MethodInfo s_TakeLast__TSource__2__0;
+        
+        private static MethodInfo TakeLast__TSource__2__0(Type TSource) =>
+            (s_TakeLast__TSource__2__0 ??
+            (s_TakeLast__TSource__2__0 = new Func<IQueryable<TSource>, int, IQueryable<TSource>>(TakeLast<TSource>).GetMethodInfo().GetGenericMethodDefinition())).MakeGenericMethod(TSource);
+
+        public static IQueryable<TSource> TakeLast<TSource>(this IQueryable<TSource> source, int count)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Repeat<TSource>(default(IQueryable<TSource>))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
-#endif
-                    source.Expression
-                )
-            );
+            return source.Provider.CreateQuery<TSource>(Expression.Call(TakeLast__TSource__2__0(typeof(TSource)), source.Expression, Expression.Constant(count, typeof(int))));
         }
 
 #pragma warning disable 1591
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Repeat<TSource>(IEnumerable<TSource> source)
+        public static IEnumerable<TSource> TakeLast<TSource>(IEnumerable<TSource> source, int count)
         {
-            return EnumerableEx.Repeat(source);
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Repeats and concatenates the source sequence the given number of times.
-        /// </summary>
-        /// <typeparam name="TSource">Source sequence element type.</typeparam>
-        /// <param name="source">Source sequence.</param>
-        /// <param name="count">Number of times to repeat the source sequence.</param>
-        /// <returns>Sequence obtained by concatenating the source sequence to itself the specified number of times.</returns>
-        public static IQueryable<TSource> Repeat<TSource>(this IQueryable<TSource> source, int count)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.Provider.CreateQuery<TSource>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Repeat<TSource>(default(IQueryable<TSource>), default(int))),
+#if REFERENCE_ASSEMBLY
+            return default;
 #else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+            return EnumerableEx.TakeLast<TSource>(source, count);
 #endif
-                    source.Expression,
-                    Expression.Constant(count, typeof(int))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEnumerable<TSource> Repeat<TSource>(IEnumerable<TSource> source, int count)
-        {
-            return EnumerableEx.Repeat(source, count);
         }
 #pragma warning restore 1591
 
-        /// <summary>
-        /// Returns a sequence with no elements.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <returns>Sequence with no elements.</returns>
-        public static IQueryable<TResult> Empty<TResult>(this IQueryProvider provider)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Empty<TResult>(default(IQueryProvider))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Empty<TResult>()
-        {
-            return Enumerable.Empty<TResult>().AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence of integral numbers within a specified range.
-        /// </summary>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="start">The value of the first integer in the sequence.</param>
-        /// <param name="count">The number of sequential integers to generate.</param>
-        /// <returns>Sequence that contains a range of sequential integral numbers.</returns>
-        public static IQueryable<int> Range(this IQueryProvider provider, int start, int count)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            return provider.CreateQuery<int>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Range(default(IQueryProvider), default(int), default(int))),
-#else
-                    (MethodInfo)MethodInfo.GetCurrentMethod(),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    Expression.Constant(start, typeof(int)),
-                    Expression.Constant(count, typeof(int))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<int> Range(int start, int count)
-        {
-            return Enumerable.Range(start, count).AsQueryable();
-        }
-#pragma warning restore 1591
-
-        /// <summary>
-        /// Generates a sequence that contains one repeated value.
-        /// </summary>
-        /// <typeparam name="TResult">Result sequence element type.</typeparam>
-        /// <param name="provider">Query provider.</param>
-        /// <param name="element">The value to be repeated.</param>
-        /// <param name="count">The number of times to repeat the value in the generated sequence.</param>
-        /// <returns>Sequence that contains a repeated value.</returns>
-        public static IQueryable<TResult> Repeat<TResult>(this IQueryProvider provider, TResult element, int count)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            return provider.CreateQuery<TResult>(
-                Expression.Call(
-                    null,
-#if CRIPPLED_REFLECTION
-                    InfoOf(() => QueryableEx.Repeat<TResult>(default(IQueryProvider), default(TResult), default(int))),
-#else
-                    ((MethodInfo)MethodInfo.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)),
-#endif
-                    Expression.Constant(provider, typeof(IQueryProvider)),
-                    Expression.Constant(element, typeof(TResult)),
-                    Expression.Constant(count, typeof(int))
-                )
-            );
-        }
-
-#pragma warning disable 1591
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static /*!*/IQueryable<TResult> Repeat<TResult>(TResult element, int count)
-        {
-            return EnumerableEx.Repeat<TResult>(element, count).AsQueryable();
-        }
-#pragma warning restore 1591
     }
 }

@@ -1,0 +1,349 @@
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Runtime" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Threading" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+var infoFieldNames = new Dictionary<string, int>();
+
+var toQuotedImpl = default(Func<Type, int, bool, string>);
+toQuotedImpl = (t, i, b) =>
+{
+var name = t.Name;
+
+if (t.IsGenericType)
+{
+    var genDef = t.GetGenericTypeDefinition();
+    name = genDef.Name.Substring(0, genDef.Name.LastIndexOf('`'));
+
+    var genArgs = "<" + string.Join(", ", t.GetGenericArguments().Select(a => toQuotedImpl(a, i, false))) + ">";
+
+    if (b)
+    {
+        if (name == "Func" || name == "Action")
+        {
+            name = "Expression<" + name + genArgs + ">";
+        }
+        else if (name == "IEnumerable" && i == 0)
+        {
+            name = "IQueryable" + genArgs;
+        }
+        else if (name == "IOrderedEnumerable" && i == 0)
+        {
+            name = "IOrderedQueryable" + genArgs;
+        }
+        else
+        {
+            name += genArgs;
+        }
+    }
+    else
+    {
+        if (name == "Nullable")
+        {
+            name = genArgs.Substring(1, genArgs.Length - 2) + "?";
+        }
+        else
+        {
+            name += genArgs;
+        }
+    }
+}
+else if (t.IsArray)
+{
+    var elem = toQuotedImpl(t.GetElementType(), i, b);
+    name = elem + "[]";
+}
+else
+{
+    if (t == typeof(int))
+    {
+        name = "int";
+    }
+    else if (t == typeof(long))
+    {
+        name = "long";
+    }
+    else if (t == typeof(float))
+    {
+        name = "float";
+    }
+    else if (t == typeof(double))
+    {
+        name = "double";
+    }
+    else if (t == typeof(decimal))
+    {
+        name = "decimal";
+    }
+    else if (t == typeof(bool))
+    {
+        name = "bool";
+    }
+    else if (t == typeof(object))
+    {
+        name = "object";
+    }
+}
+
+return name;
+};
+
+var toQuoted = new Func<Type, int, string>((t, i) => toQuotedImpl(t, i, true));
+var toCSharp = new Func<Type, string>(t => toQuotedImpl(t, 0, false));
+#>
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
+
+namespace System.Linq
+{
+    public static partial class <#=className#>
+    {
+<#
+// NOTE: Just including extension methods
+foreach (var m in enumerableType.GetMethods()
+                        .Where(m => m.IsStatic)
+                        .Where(m => !exclude.Contains(m.Name))
+                        .Where(m =>
+                        {
+                            if (m.ReturnType.IsGenericType)
+                            {
+                                if (m.ReturnType.GetGenericTypeDefinition() == typeof(IBuffer<>))
+                                {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        })
+                        .Where(m => m.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), true))
+                        .Where(m =>
+                        {
+                            var p0 = m.GetParameters()[0].ParameterType;
+                            if (p0.IsGenericType)
+                            {
+                                var p0d = p0.GetGenericTypeDefinition();
+                                return p0d == typeof(IEnumerable<>) || p0d == typeof(IOrderedEnumerable<>);
+                            }
+
+                            return false;
+                        })
+                        .OrderBy(m => m.Name)
+                        .ThenBy(m => m.IsGenericMethod ? m.GetGenericArguments().Length : 0)
+                        .ThenBy(m => m.GetParameters().Length)
+                        .ThenBy(m => string.Join(", ", m.GetParameters().Select((p, i) => toQuoted(p.ParameterType, i) + " " + p.Name))))
+{
+    var genArgs = m.GetGenericArguments();
+
+    var ret = toQuoted(m.ReturnType, 0);
+    var name = m.Name;
+
+    if (genArgs.Length > 0)
+    {
+        name += "<" + string.Join(", ", genArgs.Select(a => a.Name)) + ">";
+    }
+
+    var isParams = false;
+    var parCount = m.GetParameters().Length;
+
+    if (parCount != 0)
+    {
+        var lastParam = m.GetParameters().Last();
+
+        if (lastParam.IsDefined(typeof(ParamArrayAttribute), true))
+        {
+            isParams = true;
+        }
+    }
+
+    var pars = string.Join(", ", m.GetParameters().Select((p, i) => (i == parCount - 1 && isParams ? "params " : "") + toQuoted(p.ParameterType, i) + (nullableParameterNames.Contains(p.Name) ? "?" : "") + " " + p.Name));
+    var quotedPars = string.Join(", ", m.GetParameters().Select((p, i) => "default(" + toQuoted(p.ParameterType, i) + ")"));
+
+    if (m.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), true))
+    {
+        pars = "this " + pars;
+    }
+
+    var infoName = m.Name;
+    var infoTypeArgs = "";
+    var infoToGeneric = "";
+    var infoMakeGeneric = "";
+    var infoGenArgs = "";
+
+    if (genArgs.Length > 0)
+    {
+        infoName += "__" + string.Join("_", genArgs.Select(a => a.Name));
+        infoTypeArgs = "(" + string.Join(", ", genArgs.Select(a => "Type " + a.Name)) + ")";
+        infoToGeneric = ".GetGenericMethodDefinition()";
+        infoMakeGeneric = ".MakeGenericMethod(" + string.Join(", ", genArgs.Select(a => a.Name)) + ")";
+        infoGenArgs = "<" + string.Join(", ", genArgs.Select(t => t.Name)) + ">";
+    }
+
+    infoName += "__" + parCount + "__";
+
+    int infoNameCount;
+    if (!infoFieldNames.TryGetValue(infoName, out infoNameCount))
+    {
+        infoNameCount = 0;
+    }
+
+    var infoNameId = infoNameCount++;
+
+    infoFieldNames[infoName] = infoNameCount;
+
+    infoName += infoNameId;
+
+    var infoSignature = string.Join(", ", m.GetParameters().Select((p, i) => toQuoted(p.ParameterType, i)).Concat(new[] { toQuoted(m.ReturnType, 0) }));
+
+    foreach (var genArg in genArgs)
+    {
+        //infoSignature = infoSignature.Replace(genArg.Name, "object");
+    }
+
+    var mtd = infoName;
+
+    if (m.IsGenericMethod)
+    {
+        mtd += "(" + string.Join(", ", genArgs.Select(a => "typeof(" + a.Name + ")")) + ")";
+    }
+
+    var provider = m.GetParameters()[0].Name + ".Provider";
+    var factory = "";
+    var rem = "";
+    var cast = "";
+    var quotedArgs = new List<string>();
+    var isAggregate = false;
+
+    if (m.ReturnType.IsGenericType)
+    {
+        var td = m.ReturnType.GetGenericTypeDefinition();
+
+        if (td == typeof(Nullable<>) || td == typeof(IList<>))
+        {
+            isAggregate = true;
+        }
+        else if (td == typeof(IEnumerable<>) || td == typeof(IOrderedEnumerable<>))
+        {
+            factory = "CreateQuery<" + toQuotedImpl(m.ReturnType.GetGenericArguments()[0], -1, false) + ">";
+
+            if (td == typeof(IOrderedEnumerable<>))
+            {
+                cast = "(" + toQuoted(m.ReturnType, 0) + ")";
+            }
+        }
+    }
+    else
+    {
+        isAggregate = true;
+    }
+
+    if (isAggregate)
+    {
+        factory = "Execute<" + toQuotedImpl(m.ReturnType, -1, false) + ">";
+    }
+
+    var constraints = "";
+
+    if (m.IsGenericMethod)
+    {
+        constraints = string.Join(" ", m.GetGenericArguments().SelectMany(t => t.GetGenericParameterConstraints(), (t, c) => "where " + t.Name + " : " + c.Name));
+        if (constraints.Length != 0)
+        {
+            constraints = " " + constraints;
+        }
+    }
+
+    var n = 0;
+    foreach (var p in m.GetParameters())
+    {
+        var pt = p.ParameterType;
+
+        var add = false;
+
+        if (pt.IsGenericType)
+        {
+            var ptd = pt.GetGenericTypeDefinition();
+
+            if (ptd == typeof(IEnumerable<>) || ptd == typeof(IOrderedEnumerable<>))
+            {
+                if (n == 0)
+                {
+                    quotedArgs.Add(p.Name + ".Expression");
+                }
+                else
+                {
+                    quotedArgs.Add("GetSourceExpression(" + p.Name + ")");
+                }
+                add = true;
+            }
+            else if (ptd.Name.StartsWith("Func") || ptd.Name.StartsWith("Action"))
+            {
+                quotedArgs.Add(p.Name);
+                add = true;
+            }
+        }
+        
+        if (!add)
+        {
+            quotedArgs.Add("Expression.Constant(" + p.Name + ", typeof(" + toQuoted(pt, -1) + "))");
+        }
+
+        n++;
+    }
+
+    var expr = "Expression.Call(" + mtd + ", " + string.Join(", ", quotedArgs) + ")";
+#>
+        private static MethodInfo s_<#=infoName#>;
+        
+        private static MethodInfo <#=infoName#><#=infoTypeArgs#> =>
+            (s_<#=infoName#> ??
+            (s_<#=infoName#> = new Func<<#=infoSignature#>>(<#=m.Name#><#=infoGenArgs#>).GetMethodInfo()<#=infoToGeneric#>))<#=infoMakeGeneric#>;
+
+        public static <#=ret#> <#=name#>(<#=pars#>)<#=constraints#>
+        {
+<#
+var any = false;
+foreach (var p in m.GetParameters())
+{
+    if (!p.ParameterType.IsValueType && !p.ParameterType.IsGenericParameter && !nullableParameterNames.Contains(p.Name))
+    {
+        any = true;
+#>
+            if (<#=p.Name#> == null)
+                throw new ArgumentNullException(nameof(<#=p.Name#>));
+<#
+    }
+}
+#>
+<#
+if (any)
+{
+#>
+
+<#
+}
+
+#>
+            return <#=cast#><#=provider#>.<#=factory#>(<#=expr#><#=rem#>);
+        }
+
+#pragma warning disable 1591
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static <#=toCSharp(m.ReturnType)#> <#=name#>(<#=string.Join(", ", m.GetParameters().Select(p => toCSharp(p.ParameterType) + " " + p.Name))#>)<#=constraints#>
+        {
+#if REFERENCE_ASSEMBLY
+            return default;
+#else
+            return <#=enumerableType.Name#>.<#=name#>(<#=string.Join(", ", m.GetParameters().Select(p => p.Name))#>);
+#endif
+        }
+#pragma warning restore 1591
+
+<#
+}
+#>
+    }
+}

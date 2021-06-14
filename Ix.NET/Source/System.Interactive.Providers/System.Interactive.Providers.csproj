@@ -24,4 +24,23 @@
     <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="System\Linq\QueryableEx.Generated.tt">
+      <LastGenOutput>QueryableEx.Generated.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="System\Linq\QueryableEx.Generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>QueryableEx.Generated.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
