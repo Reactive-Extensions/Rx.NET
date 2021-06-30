@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/Ix.NET/Source"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: System.Interactive
+    versions:
+    - "> 3.1.1"
+- package-ecosystem: nuget
+  directory: "/Rx.NET/Source"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: System.Reactive
+    versions:
+    - ">= 4.a"
+    - "< 5"
