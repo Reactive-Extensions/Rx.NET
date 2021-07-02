@@ -36,7 +36,7 @@ Rx 5.x supports the following platforms
 
 - .NET 5
 - .NET 5 with the Windows 10 19041 SDK (able to target earlier Windows versions)
-- .NET Framework 4.6
+- .NET Framework 4.7
 - UWP 10.0.16299
 - .NET Standard 2.0
 
