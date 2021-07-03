@@ -113,6 +113,21 @@ namespace System.Collections.Generic
             return set;
         }
 
+        internal static async ValueTask<TResult> ToCollection<TSource, TCollection, TResult>(
+            this IAsyncEnumerable<TSource> source,
+            TCollection collection,
+            Func<TCollection, TResult> resultSelector,
+            CancellationToken cancellationToken)
+            where TCollection : ICollection<TSource>
+        {
+            await foreach (var item in source.WithCancellation(cancellationToken).ConfigureAwait(false))
+            {
+                collection.Add(item);
+            }
+
+            return resultSelector(collection);
+        }
+
         internal struct ArrayWithLength<T>
         {
             public T[] Array;
