@@ -31,7 +31,17 @@ namespace System.Linq
 
         // REVIEW: Should we keep these overloads that return ValueTask<IAsyncEnumerable<TResult>>? One could argue the selector is async twice.
 
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<IAsyncEnumerable<TResult>>> selector)
+        /// <summary>
+        /// Projects each element of an async-enumerable sequence into an async-enumerable sequence and merges the resulting async-enumerable sequences into one async-enumerable sequence.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <typeparam name="TResult">The type of elements in the projected inner sequences and the merged result sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of elements to project.</param>
+        /// <param name="selector">An asynchronous selector function to apply to each element of the source sequence.</param>
+        /// <returns>An async-enumerable sequence whose elements are the result of invoking the one-to-many transform function on each element of the source sequence and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is null.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<IAsyncEnumerable<TResult>>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -42,7 +52,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<IAsyncEnumerable<TResult>>> selector)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<IAsyncEnumerable<TResult>>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -92,7 +103,17 @@ namespace System.Linq
             }
         }
 
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<IAsyncEnumerable<TResult>>> selector)
+        /// <summary>
+        /// Projects each element of an async-enumerable sequence into an async-enumerable sequence by incorporating the element's index and merges the resulting async-enumerable sequences into an async-enumerable sequence.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <typeparam name="TResult">The type of elements in the projected inner sequences and the merged result sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of elements to project.</param>
+        /// <param name="selector">An asynchronous selector function to apply to each element; the second parameter represents the index of the element.</param>
+        /// <returns>An async-enumerable sequence who's elements are the result of invoking the one-to-many transform function on each element of the source sequence and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is null.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<IAsyncEnumerable<TResult>>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -123,7 +144,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<IAsyncEnumerable<TResult>>> selector)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<IAsyncEnumerable<TResult>>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -190,7 +212,19 @@ namespace System.Linq
             }
         }
 
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, ValueTask<TResult>> resultSelector)
+        /// <summary>
+        /// Projects each element of an async-enumerable sequence to an async-enumerable sequence by awaiting the result of a transform function, invokes the result selector for each of the source elements and each of the corrasponding inner-sequence's elements and awaits the result, and merges the results into one async-enumerable sequence.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <typeparam name="TCollection">The type of elements in the projected intermediate sequences.</typeparam>
+        /// <typeparam name="TResult">The type of elements in the result sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of elements to project.</param>
+        /// <param name="collectionSelector">An asynchronous transform function to apply to each source element.</param>
+        /// <param name="resultSelector">An asynchronous transform function to apply to each element of the intermediate sequence.</param>
+        /// <returns>An async-enumerable sequence whose elements are the result of invoking the one-to-many transform function <paramref name="collectionSelector"/> on each element of the input sequence, awaiting the result, applying <paramref name="resultSelector"/> to each element of the intermediate sequences along with their corrasponding source element and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/>, <paramref name="collectionSelector"/>, or <paramref name="resultSelector"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, ValueTask<TResult>> resultSelector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -216,7 +250,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, CancellationToken, ValueTask<TResult>> resultSelector)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, CancellationToken, ValueTask<TResult>> resultSelector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -285,7 +320,20 @@ namespace System.Linq
             }
         }
 
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, ValueTask<TResult>> resultSelector)
+        /// <summary>
+        /// Projects each element of an async-enumerable sequence to an async-enumerable sequence by awaiting the result of a transform function that incorporates each element's index,
+        /// invokes the result selector for the source element and each of the corrasponding inner-sequence's elements and awaits the result, and merges the results into one async-enumerable sequence.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <typeparam name="TCollection">The type of elements in the projected intermediate sequences.</typeparam>
+        /// <typeparam name="TResult">The type of elements in the result sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of elements to project.</param>
+        /// <param name="collectionSelector">An asynchronous transform function to apply to each source element; the second parameter represents the index of the element.</param>
+        /// <param name="resultSelector">An asynchronous transform function to apply to each element of the intermediate sequence.</param>
+        /// <returns>An async-enumerable sequence whose elements are the result of invoking the one-to-many transform function <paramref name="collectionSelector"/> on each element of the input sequence, awaiting the result, applying <paramref name="resultSelector"/> to each element of the intermediate sequences olong with their corrasponding source element and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/>, <paramref name="collectionSelector"/>, or <paramref name="resultSelector"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, ValueTask<TResult>> resultSelector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -318,7 +366,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, CancellationToken, ValueTask<TResult>> resultSelector)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectManyAwaitWithCancellationCore<TSource, TCollection, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<IAsyncEnumerable<TCollection>>> collectionSelector, Func<TSource, TCollection, CancellationToken, ValueTask<TResult>> resultSelector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));

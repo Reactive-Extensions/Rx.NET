@@ -28,6 +28,7 @@
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)' != 'netcoreapp3.1' and '$(TargetFramework)' != 'netstandard2.1' " Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <ReferenceAssemblyProjectReference Include="..\refs\System.Linq.Async.Ref\System.Linq.Async.Ref.csproj" />
+    <ProjectReference Include="..\System.Linq.Async.SourceGenerator\System.Linq.Async.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Private="false" />
   </ItemGroup>
 
   <ItemGroup>

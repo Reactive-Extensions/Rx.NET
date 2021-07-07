@@ -70,7 +70,16 @@ namespace System.Linq
             }
         }
 
-        internal static IAsyncEnumerable<TSource> WhereAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate)
+        /// <summary>
+        /// Filters the elements of an async-enumerable sequence based on an asynchronous predicate.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to filter.</param>
+        /// <param name="predicate">An asynchronous predicate to test each source element for a condition.</param>
+        /// <returns>An async-enumerable sequence that contains elements from the input sequence that satisfy the condition.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is null.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> WhereAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -87,7 +96,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TSource> WhereAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> WhereAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -104,7 +114,16 @@ namespace System.Linq
         }
 #endif
 
-        internal static IAsyncEnumerable<TSource> WhereAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<bool>> predicate)
+        /// <summary>
+        /// Filters the elements of an async-enumerable sequence based on an asynchronous predicate that incorporates the element's index.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to filter.</param>
+        /// <param name="predicate">An asynchronous predicate to test each source element for a condition; the second parameter of the function represents the index of the source element.</param>
+        /// <returns>An async-enumerable sequence that contains elements from the input sequence that satisfy the condition.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is null.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> WhereAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -133,7 +152,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TSource> WhereAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<bool>> predicate)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> WhereAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));

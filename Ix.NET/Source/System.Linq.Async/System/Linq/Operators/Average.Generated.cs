@@ -95,7 +95,19 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<double> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<int>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="int"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">The source sequence is empty.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<double> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<int>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -130,7 +142,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<double> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<int>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<double> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<int>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -250,7 +263,19 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<double> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<long>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="long"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">The source sequence is empty.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<double> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<long>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -285,7 +310,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<double> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<long>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<double> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<long>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -405,7 +431,19 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<float> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<float>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="float"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">The source sequence is empty.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<float> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<float>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -440,7 +478,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<float> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<float>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<float> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<float>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -560,7 +599,19 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<double> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<double>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="double"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">The source sequence is empty.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<double> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<double>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -595,7 +646,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<double> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<double>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<double> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<double>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -715,7 +767,19 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<decimal> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<decimal>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="decimal"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">The source sequence is empty.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<decimal> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<decimal>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -750,7 +814,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<decimal> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<decimal>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<decimal> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<decimal>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -886,7 +951,18 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<double?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<int?>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="Nullable{Int}"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values, or <see langword="null"/> if the source sequence is empty.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<double?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<int?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -929,7 +1005,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<double?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<int?>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<double?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<int?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1073,7 +1150,18 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<double?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<long?>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="Nullable{Long}"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values, or <see langword="null"/> if the source sequence is empty.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<double?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<long?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1116,7 +1204,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<double?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<long?>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<double?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<long?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1260,7 +1349,18 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<float?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<float?>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="Nullable{Float}"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values, or <see langword="null"/> if the source sequence is empty.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<float?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<float?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1303,7 +1403,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<float?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<float?>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<float?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<float?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1447,7 +1548,18 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<double?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<double?>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="Nullable{Double}"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values, or <see langword="null"/> if the source sequence is empty.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<double?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<double?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1490,7 +1602,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<double?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<double?>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<double?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<double?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1634,7 +1747,18 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<decimal?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<decimal?>> selector, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Computes the average of an async-enumerable sequence of <see cref="Nullable{Decimal}"/> values that are obtained by invoking an asynchronous transform function on each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence of values to compute the average of.</param>
+        /// <param name="selector">A transform function to invoke and await on each element of the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the average of the sequence of values, or <see langword="null"/> if the source sequence is empty.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is <see langword="null"/>.</exception>
+        /// <remarks>The return type of this operator differs from the corresponding operator on IEnumerable in order to retain asynchronous behavior.</remarks>
+        [GenerateAsyncOverload]
+        private static ValueTask<decimal?> AverageAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<decimal?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -1677,7 +1801,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<decimal?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<decimal?>> selector, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<decimal?> AverageAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<decimal?>> selector, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));

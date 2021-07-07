@@ -35,17 +35,40 @@ namespace System.Linq
         public static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupBy<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedAsyncEnumerable<TSource, TKey>(source, keySelector, comparer);
 
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence according to a specified key selector function.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+        /// <typeparam name="TKey">The type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <returns>A sequence of async-enumerable groups, each of which corresponds to a unique key value, containing all elements that share that same key value.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector) =>
             new GroupedAsyncEnumerableWithTask<TSource, TKey>(source, keySelector, comparer: null);
 
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, IEqualityComparer<TKey>? comparer) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence according to a specified key selector function and comparer.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+        /// <typeparam name="TKey">The type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys with.</param>
+        /// <returns>A sequence of async-enumerable groups, each of which corresponds to a unique key value, containing all elements that share that same key value.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> or <paramref name="comparer"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedAsyncEnumerableWithTask<TSource, TKey>(source, keySelector, comparer);
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitWithCancellationCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitWithCancellationCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector) =>
             new GroupedAsyncEnumerableWithTaskAndCancellation<TSource, TKey>(source, keySelector, comparer: null);
 
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitWithCancellationCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, IEqualityComparer<TKey>? comparer) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TSource>> GroupByAwaitWithCancellationCore<TSource, TKey>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedAsyncEnumerableWithTaskAndCancellation<TSource, TKey>(source, keySelector, comparer);
 #endif
 
@@ -78,17 +101,44 @@ namespace System.Linq
         public static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedAsyncEnumerable<TSource, TKey, TElement>(source, keySelector, elementSelector, comparer);
 
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence and selects the resulting elements by using a specified function.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+        /// <typeparam name="TKey">The type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <typeparam name="TElement">The type of the elements within the groups computed for each element in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <param name="elementSelector">An asynchronous function to map each source element to an element in an async-enumerable group.</param>
+        /// <returns>A sequence of async-enumerable groups, each of which corresponds to a unique key value, containing all elements that share that same key value.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> or <paramref name="elementSelector"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector) =>
             new GroupedAsyncEnumerableWithTask<TSource, TKey, TElement>(source, keySelector, elementSelector, comparer: null);
 
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector, IEqualityComparer<TKey>? comparer) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence and selects the resulting elements by using a specified function.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+        /// <typeparam name="TKey">The type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <typeparam name="TElement">The type of the elements within the groups computed for each element in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <param name="elementSelector">An asynchronous function to map each source element to an element in an async-enumerable group.</param>
+        /// <param name="comparer">An equality comparer to use to compare keys.</param>
+        /// <returns>A sequence of async-enumerable groups, each of which corresponds to a unique key value, containing all elements that share that same key value.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> or <paramref name="elementSelector"/> or <paramref name="comparer"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedAsyncEnumerableWithTask<TSource, TKey, TElement>(source, keySelector, elementSelector, comparer);
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitWithCancellationCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitWithCancellationCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector) =>
             new GroupedAsyncEnumerableWithTaskAndCancellation<TSource, TKey, TElement>(source, keySelector, elementSelector, comparer: null);
 
-        internal static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitWithCancellationCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector, IEqualityComparer<TKey>? comparer) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<IAsyncGrouping<TKey, TElement>> GroupByAwaitWithCancellationCore<TSource, TKey, TElement>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedAsyncEnumerableWithTaskAndCancellation<TSource, TKey, TElement>(source, keySelector, elementSelector, comparer);
 #endif
 
@@ -98,17 +148,44 @@ namespace System.Linq
         public static IAsyncEnumerable<TResult> GroupBy<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, IAsyncEnumerable<TSource>, TResult> resultSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedResultAsyncEnumerable<TSource, TKey, TResult>(source, keySelector, resultSelector, comparer);
 
-        internal static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, ValueTask<TResult>> resultSelector) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence according to a specified key selector function, and then applies a result selector function to each group.
+        /// </summary>
+        /// <typeparam name="TSource">Type of element in the source sequence.</typeparam>
+        /// <typeparam name="TKey">Type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <typeparam name="TResult">The result type returned by the result selector function.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <param name="resultSelector">An asynchronous function to transform each group into the result type.</param>
+        /// <returns>An async-enumerable sequence of results obtained by invoking and awaiting the result-selector function on each group.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> or <paramref name="resultSelector"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, ValueTask<TResult>> resultSelector) =>
             new GroupedResultAsyncEnumerableWithTask<TSource, TKey, TResult>(source, keySelector, resultSelector, comparer: null);
 
-        internal static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence according to a specified key selector function, and then applies a result selector function to each group.
+        /// </summary>
+        /// <typeparam name="TSource">Type of element in the source sequence.</typeparam>
+        /// <typeparam name="TKey">Type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <typeparam name="TResult">The result type returned by the result selector function.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <param name="resultSelector">An asynchronous function to transform each group into the result type.</param>
+        /// <param name="comparer">An equality comparer to use to compare keys.</param>
+        /// <returns>An async-enumerable sequence of results obtained by invoking and awaiting the result-selector function on each group.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> or <paramref name="resultSelector"/> or <paramref name="comparer"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedResultAsyncEnumerableWithTask<TSource, TKey, TResult>(source, keySelector, resultSelector, comparer);
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, CancellationToken, ValueTask<TResult>> resultSelector) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, CancellationToken, ValueTask<TResult>> resultSelector) =>
             new GroupedResultAsyncEnumerableWithTaskAndCancellation<TSource, TKey, TResult>(source, keySelector, resultSelector, comparer: null);
 
-        internal static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, CancellationToken, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TKey, IAsyncEnumerable<TSource>, CancellationToken, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedResultAsyncEnumerableWithTaskAndCancellation<TSource, TKey, TResult>(source, keySelector, resultSelector, comparer);
 #endif
 
@@ -118,17 +195,48 @@ namespace System.Linq
         public static IAsyncEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, TResult> resultSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedResultAsyncEnumerable<TSource, TKey, TElement, TResult>(source, keySelector, elementSelector, resultSelector, comparer);
 
-        internal static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, ValueTask<TResult>> resultSelector) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence according to a specified key-selector function, applies an element selector to each element of each group, then applies a result selector to each transformed group.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element in the source sequence.</typeparam>
+        /// <typeparam name="TKey">The type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <typeparam name="TElement">The type of element computed by the element selector.</typeparam>
+        /// <typeparam name="TResult">The type of the final result, computed by applying the result selector to each transformed group of elements.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <param name="elementSelector">An asynchronous function to apply to each element of each group. </param>
+        /// <param name="resultSelector">An asynchronous function to transform each group into the result type.</param>
+        /// <returns>An async-enumerable sequence of results obtained by invoking the result selector function on each group and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> or <paramref name="elementSelector"/> or <paramref name="resultSelector"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, ValueTask<TResult>> resultSelector) =>
             new GroupedResultAsyncEnumerableWithTask<TSource, TKey, TElement, TResult>(source, keySelector, elementSelector, resultSelector, comparer: null);
 
-        internal static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
+        /// <summary>
+        /// Groups the elements of an async-enumerable sequence according to a specified key-selector function, applies an element selector to each element of each group, then applies a result selector to each transformed group.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element in the source sequence.</typeparam>
+        /// <typeparam name="TKey">The type of the grouping key computed for each element in the source sequence.</typeparam>
+        /// <typeparam name="TElement">The type of element computed by the element selector.</typeparam>
+        /// <typeparam name="TResult">The type of the final result, computed by applying the result selector to each transformed group of elements.</typeparam>
+        /// <param name="source">An async-enumerable sequence whose elements to group.</param>
+        /// <param name="keySelector">An asynchronous function to extract the key for each element.</param>
+        /// <param name="elementSelector">An asynchronous function to apply to each element of each group. </param>
+        /// <param name="resultSelector">An asynchronous function to transform each group into the result type.</param>
+        /// <param name="comparer">An equality comparer to use to compare keys.</param>
+        /// <returns>An async-enumerable sequence of results obtained by invoking the result selector function on each group and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="keySelector"/> or <paramref name="elementSelector"/> or <paramref name="resultSelector"/> or <paramref name="comparer"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TKey>> keySelector, Func<TSource, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedResultAsyncEnumerableWithTask<TSource, TKey, TElement, TResult>(source, keySelector, elementSelector, resultSelector, comparer);
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, CancellationToken, ValueTask<TResult>> resultSelector) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, CancellationToken, ValueTask<TResult>> resultSelector) =>
             new GroupedResultAsyncEnumerableWithTaskAndCancellation<TSource, TKey, TElement, TResult>(source, keySelector, elementSelector, resultSelector, comparer: null);
 
-        internal static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, CancellationToken, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> GroupByAwaitWithCancellationCore<TSource, TKey, TElement, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TKey>> keySelector, Func<TSource, CancellationToken, ValueTask<TElement>> elementSelector, Func<TKey, IAsyncEnumerable<TElement>, CancellationToken, ValueTask<TResult>> resultSelector, IEqualityComparer<TKey>? comparer) =>
             new GroupedResultAsyncEnumerableWithTaskAndCancellation<TSource, TKey, TElement, TResult>(source, keySelector, elementSelector, resultSelector, comparer);
 #endif
 

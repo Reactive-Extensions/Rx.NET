@@ -61,7 +61,18 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<TSource> FirstAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Returns the first element of an async-enumerable sequence that satisfies the condition in the predicate.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the sequence.</typeparam>
+        /// <param name="source">Source async-enumerable sequence.</param>
+        /// <param name="predicate">An asynchronous predicate that will be invoked and awaited for each element in the sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the first element in the sequence that satisfies the predicate.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">No element satisfies the condition in the predicate. -or- The source sequence is empty.</exception>
+        [GenerateAsyncOverload]
+        private static ValueTask<TSource> FirstAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -79,6 +90,7 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
+        [GenerateAsyncOverload]
         internal static ValueTask<TSource> FirstAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
         {
             if (source == null)

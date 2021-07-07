@@ -75,7 +75,17 @@ namespace System.Linq
             }
         }
 
-        internal static Task ForEachAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, Task> action, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Invokes and awaits an asynchronous action on each element in the source sequence, and returns a task that is signaled when the sequence terminates.
+        /// </summary>
+        /// <typeparam name="TSource">Type of elements in the sequence.</typeparam>
+        /// <param name="source">Source sequence.</param>
+        /// <param name="action">Asynchronous action to invoke and await for each element in the source sequence.</param>
+        /// <param name="cancellationToken">Optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>Task that signals the termination of the sequence.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="action"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static Task ForEachAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, Task> action, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -93,6 +103,8 @@ namespace System.Linq
             }
         }
 
+        #if !NO_DEEP_CANCELLATION
+        [GenerateAsyncOverload]
         internal static Task ForEachAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, Task> action, CancellationToken cancellationToken)
         {
             if (source == null)
@@ -110,8 +122,19 @@ namespace System.Linq
                 }
             }
         }
+        #endif
 
-        internal static Task ForEachAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, Task> action, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Invokes and awaits an asynchronous action on each element in the source sequence, incorporating the element's index, and returns a task that is signaled when the sequence terminates.
+        /// </summary>
+        /// <typeparam name="TSource">Type of elements in the sequence.</typeparam>
+        /// <param name="source">Source sequence.</param>
+        /// <param name="action">Asynchronous action to invoke and await for each element in the source sequence; the second parameter represents the index of the element.</param>
+        /// <param name="cancellationToken">Optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>Task that signals the termination of the sequence.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="action"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static Task ForEachAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, Task> action, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -131,6 +154,8 @@ namespace System.Linq
             }
         }
 
+        #if !NO_DEEP_CANCELLATION
+        [GenerateAsyncOverload]
         internal static Task ForEachAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, Task> action, CancellationToken cancellationToken)
         {
             if (source == null)
@@ -150,6 +175,7 @@ namespace System.Linq
                 }
             }
         }
+        #endif
     }
 }
 

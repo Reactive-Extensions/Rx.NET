@@ -59,7 +59,17 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<TSource?> FirstOrDefaultAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Returns the first element of an async-enumerable sequence that satisfies the condition in the predicate, or a default value if no element satisfies the condition in the predicate.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element in the sequence.</typeparam>
+        /// <param name="source">Source async-enumerable sequence.</param>
+        /// <param name="predicate">An asynchronous predicate to invoke and await on each element of the sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the first element in the sequence that satisfies the predicate, or a default value if no element satisfies the predicate.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static ValueTask<TSource?> FirstOrDefaultAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -77,7 +87,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<TSource?> FirstOrDefaultAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<TSource?> FirstOrDefaultAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));

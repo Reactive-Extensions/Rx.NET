@@ -68,7 +68,17 @@ namespace System.Linq
             }
         }
 
-        internal static IAsyncEnumerable<TResult> SelectAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TResult>> selector)
+        /// <summary>
+        /// Projects each element of an async-enumerable sequence into a new form by applying an asynchronous selector function to each member of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements in the source sequence.</typeparam>
+        /// <typeparam name="TResult">The type of the elements in the result sequence, obtained by running the selector function for each element in the source sequence and awaiting the result.</typeparam>
+        /// <param name="source">A sequence of elements to invoke a transform function on.</param>
+        /// <param name="selector">An asynchronous transform function to apply to each source element.</param>
+        /// <returns>An async-enumerable sequence whose elements are the result of invoking the transform function on each element of the source sequence and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is null.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<TResult>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -84,7 +94,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> SelectAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TResult>> selector)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<TResult>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -100,7 +111,17 @@ namespace System.Linq
         }
 #endif
 
-        internal static IAsyncEnumerable<TResult> SelectAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<TResult>> selector)
+        /// <summary>
+        /// Projects each element of an async-enumerable sequence into a new form by applying an asynchronous selector function that incorporates each element's index to each element of the source sequence and awaiting the result.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <typeparam name="TResult">The type of elements in the result sequence, obtained by running the selector function for each element and its index, and awaiting the result.</typeparam>
+        /// <param name="source">A sequence of elements to invoke a transform function on.</param>
+        /// <param name="selector">An asynchronous transform function to apply to each source element; the second parameter represents the index of the element.</param>
+        /// <returns>An async-enumerable sequence whose elements are the result of invoking the transform function on each element and its index of the source sequence and awaiting the result.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="selector"/> is null.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectAwaitCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<TResult>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -126,7 +147,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TResult> SelectAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<TResult>> selector)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TResult> SelectAwaitWithCancellationCore<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<TResult>> selector)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));

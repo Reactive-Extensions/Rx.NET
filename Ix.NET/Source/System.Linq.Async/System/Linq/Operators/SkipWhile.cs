@@ -97,7 +97,16 @@ namespace System.Linq
             }
         }
 
-        internal static IAsyncEnumerable<TSource> SkipWhileAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate)
+        /// <summary>
+        /// Bypasses elements in an async-enumerable sequence as long as a condition is true, and then returns the remaining elements.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence to return elements from.</param>
+        /// <param name="predicate">An asynchronous function to test each element for a condition.</param>
+        /// <returns>An async-enumerable sequence containing the elements in the source sequence starting at the first element that does not pass the test specified by the predicate.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> SkipWhileAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -130,7 +139,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TSource> SkipWhileAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> SkipWhileAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -163,7 +173,17 @@ namespace System.Linq
         }
 #endif
 
-        internal static IAsyncEnumerable<TSource> SkipWhileAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<bool>> predicate)
+        /// <summary>
+        /// Bypasses elements in an async-enumerable sequence as long as a condition is true, and then returns the remaining elements.
+        /// The index of the element is used by the predicate.
+        /// </summary>
+        /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
+        /// <param name="source">An async-enumerable sequence to return elements from.</param>
+        /// <param name="predicate">An asynchronous function to test each element for a condition; the second parameter of the function represents the index of the element.</param>
+        /// <returns>An async-enumerable sequence containing the elements in the source sequence starting at the first element that does not pass the test specified by the predicate.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> SkipWhileAwaitCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -202,7 +222,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static IAsyncEnumerable<TSource> SkipWhileAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<bool>> predicate)
+        [GenerateAsyncOverload]
+        private static IAsyncEnumerable<TSource> SkipWhileAwaitWithCancellationCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, ValueTask<bool>> predicate)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));

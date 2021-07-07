@@ -88,7 +88,17 @@ namespace System.Linq
             }
         }
 
-        internal static ValueTask<int> CountAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Counts the elements in an async-enumerable sequence that satisfy a condition.
+        /// </summary>
+        /// <typeparam name="TSource">Type of elements in the source sequence.</typeparam>
+        /// <param name="source">A sequence of elements to count.</param>
+        /// <param name="predicate">An asynchronous predicate to apply to each element in the source sequence.</param>
+        /// <param name="cancellationToken">An optional cancellation token for cancelling the sequence at any time.</param>
+        /// <returns>A ValueTask containing the number of elements in the sequence that satisfy the predicate.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.</exception>
+        [GenerateAsyncOverload]
+        private static ValueTask<int> CountAwaitAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));
@@ -117,7 +127,8 @@ namespace System.Linq
         }
 
 #if !NO_DEEP_CANCELLATION
-        internal static ValueTask<int> CountAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
+        [GenerateAsyncOverload]
+        private static ValueTask<int> CountAwaitWithCancellationAsyncCore<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, ValueTask<bool>> predicate, CancellationToken cancellationToken = default)
         {
             if (source == null)
                 throw Error.ArgumentNull(nameof(source));

@@ -62,6 +62,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks.System.Interacti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Linq.Async.Ref", "refs\System.Linq.Async.Ref\System.Linq.Async.Ref.csproj", "{1754B36C-D0DB-4E5D-8C30-1F116046DC0F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Linq.Async.SourceGenerator", "System.Linq.Async.SourceGenerator\System.Linq.Async.SourceGenerator.csproj", "{5C26D649-5ED4-49EE-AFBD-8FA8F12C4AE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,10 @@ Global
 		{1754B36C-D0DB-4E5D-8C30-1F116046DC0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1754B36C-D0DB-4E5D-8C30-1F116046DC0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1754B36C-D0DB-4E5D-8C30-1F116046DC0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C26D649-5ED4-49EE-AFBD-8FA8F12C4AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C26D649-5ED4-49EE-AFBD-8FA8F12C4AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C26D649-5ED4-49EE-AFBD-8FA8F12C4AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C26D649-5ED4-49EE-AFBD-8FA8F12C4AE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -158,6 +164,7 @@ Global
 		{2EC0C302-B029-4DDB-AC91-000BF11006AD} = {A3D72E6E-4ADA-42E0-8B2A-055B1F244281}
 		{5DF341BE-B369-4250-AFD4-604DE8C95E45} = {A3D72E6E-4ADA-42E0-8B2A-055B1F244281}
 		{1754B36C-D0DB-4E5D-8C30-1F116046DC0F} = {A3D72E6E-4ADA-42E0-8B2A-055B1F244281}
+		{5C26D649-5ED4-49EE-AFBD-8FA8F12C4AE4} = {80EFE3A1-1414-42EA-949B-1B5370A1B2EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF70B0C6-C9D9-43B1-9BE4-08720EC1B7B7}

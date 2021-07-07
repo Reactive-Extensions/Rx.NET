@@ -1,0 +1,11 @@
+{
+  "solution": {
+    "path": "Ix.NET.sln",
+    "projects": [
+      "System.Linq.Async\\System.Linq.Async.csproj",
+      "System.Linq.Async.Tests\\System.Linq.Async.Tests.csproj",
+      "System.Linq.Async.SourceGenerator\\System.Linq.Async.SourceGenerator.csproj",
+      "refs\\System.Linq.Async.Ref\\System.Linq.Async.Ref.csproj"
+    ]
+  }
+}
